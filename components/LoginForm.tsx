@@ -1,0 +1,280 @@
+import React, { CSSProperties, useState } from "react";
+import Button from "./Button";
+import {
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import useInput from "../hooks/useInput";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/modules/setLogin";
+import { auth } from "../fb";
+
+const buttonStyle: CSSProperties = {
+  border: "1px solid gray",
+  borderRadius: "5px",
+  padding: "5px",
+};
+
+type formActionType = "login" | "signup" | "pwReset";
+
+const LoginForm = () => {
+  const dispatch = useDispatch();
+  const {
+    value: email,
+    setValue: setEmail,
+    onChange: onEmailChange,
+  } = useInput("");
+  const {
+    value: displayName,
+    setValue: setDisplayName,
+    onChange: onDisplayNameChange,
+  } = useInput("");
+  const { value: pw, setValue: setPw, onChange: onPwChange } = useInput("");
+  const {
+    value: pwCheck,
+    setValue: setPwCheck,
+    onChange: onPwCheckChange,
+  } = useInput("");
+  const { value: alert, setValue: setAlert } = useInput("");
+  const [formAction, setFormAction] = useState<formActionType>("login");
+
+  // 로그인 / 회원가입 전환
+  const onFormActionChange = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    setPw("");
+    setPwCheck("");
+    setAlert("");
+
+    if (formAction === "login") {
+      setFormAction("signup");
+    } else {
+      setFormAction("login");
+    }
+  };
+
+  // 비밀번호 재설정 전환
+  const onFormActionToPwReset = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setPw("");
+    setPwCheck("");
+    setAlert("");
+    setFormAction("pwReset");
+  };
+
+  // 전송
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (formAction === "signup") {
+      createUserWithEmailAndPassword(auth, email, pw)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName,
+          }).then(() => {
+            dispatch(
+              login.actions.setLogIn({
+                init: true,
+                isLoggedIn: true,
+                userData: { uid: user.uid, displayName: user.displayName },
+              })
+            );
+          });
+        })
+        .catch((error) => {
+          setAlert(error.code);
+        });
+    } else if (formAction === "login") {
+      signInWithEmailAndPassword(auth, email, pw)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          dispatch(
+            login.actions.setLogIn({
+              init: true,
+              isLoggedIn: true,
+              userData: { uid: user.uid, displayName: user.displayName },
+            })
+          );
+        })
+        .catch((error) => {
+          setAlert(error.code);
+        });
+    } else if (formAction === "pwReset") {
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          setAlert("재설정 메일이 발송되었습니다.");
+        })
+        .catch((error) => {
+          setAlert(error.code);
+        });
+    }
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <h1>Dailiary</h1>
+      <p className="alert">{alert}</p>
+      {formAction === "login" && (
+        <section className="login">
+          <section className="input-wrapper">
+            <input
+              type="text"
+              placeholder="이메일"
+              autoComplete="email"
+              value={email}
+              onChange={onEmailChange}
+            />
+            <input
+              type="password"
+              placeholder="비밀번호"
+              autoComplete="current-password"
+              value={pw}
+              onChange={onPwChange}
+            />
+          </section>
+          <Button
+            text="로그인"
+            style={{ ...buttonStyle, backgroundColor: "black", color: "white" }}
+          />
+          <Button
+            text="회원가입하기"
+            onClick={onFormActionChange}
+            style={buttonStyle}
+          />
+          <Button
+            text="비밀번호 재설정"
+            style={buttonStyle}
+            onClick={onFormActionToPwReset}
+          />
+        </section>
+      )}
+
+      {formAction === "signup" && (
+        <section className="sign-up">
+          <section className="input-wrapper">
+            <input
+              type="text"
+              placeholder="이메일"
+              autoComplete="email"
+              value={email}
+              onChange={onEmailChange}
+            />
+            <input
+              type="text"
+              placeholder="닉네임"
+              autoComplete="nickname"
+              value={displayName}
+              onChange={onDisplayNameChange}
+            />
+            <input
+              type="password"
+              placeholder="비밀번호"
+              value={pw}
+              onChange={onPwChange}
+            />
+            <input
+              type="password"
+              placeholder="비밀번호 확인"
+              value={pwCheck}
+              onChange={onPwCheckChange}
+            />
+          </section>
+          <Button
+            text="회원가입"
+            style={{ ...buttonStyle, backgroundColor: "black", color: "white" }}
+          />
+          <Button
+            text="로그인하기"
+            onClick={onFormActionChange}
+            style={buttonStyle}
+          />
+        </section>
+      )}
+
+      {formAction === "pwReset" && (
+        <section className="pw-reset">
+          <section className="input-wrapper">
+            <input
+              type="email"
+              placeholder="이메일"
+              autoComplete="email"
+              value={email}
+              onChange={onEmailChange}
+            />
+          </section>
+          <Button
+            text="재설정 메일 발송"
+            style={{ ...buttonStyle, backgroundColor: "black", color: "white" }}
+          />
+          <Button
+            text="로그인하기"
+            onClick={onFormActionChange}
+            style={buttonStyle}
+          />
+        </section>
+      )}
+
+      <style jsx>{`
+        form {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          h1 {
+            font: {
+              size: 30px;
+              weight: 700;
+            }
+          }
+
+          .alert {
+            height: 13px;
+            line-height: 13px;
+            margin: {
+              top: 10px;
+              bottom: 10px;
+            }
+            font: {
+              size: 13px;
+            }
+          }
+
+          .login,
+          .sign-up,
+          .pw-reset {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 5vh;
+            .input-wrapper {
+              width: 30vw;
+              min-width: 250px;
+              display: flex;
+              flex-direction: column;
+              gap: 5px;
+              margin-bottom: 10px;
+              input {
+                border: 1px solid gray;
+                border-radius: 5px;
+                padding: {
+                  left: 5px;
+                  right: 5px;
+                }
+                font: {
+                  size: 16px;
+                }
+              }
+            }
+          }
+        }
+      `}</style>
+    </form>
+  );
+};
+
+export default LoginForm;

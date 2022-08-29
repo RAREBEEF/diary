@@ -1,0 +1,94 @@
+@import "../styles/var.scss";
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap");
+
+.container {
+  // width: 100%;
+  // height: calc(100vh - $nav-height);
+
+  font: {
+    family: "Roboto Mono", monospace;
+  }
+  .nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20vh;
+    * {
+      margin: 10px;
+    }
+    & > button {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:last-child {
+        transform: rotate(180deg);
+      }
+    }
+
+    select {
+      color: rgb(100, 100, 100, 0.8);
+      cursor: pointer;
+      font: {
+        size: 20px;
+        weight: 500;
+      }
+    }
+  }
+
+  & > table {
+    text-align: center;
+    margin: auto;
+    border-collapse: separate;
+    border-spacing: 2vmin;
+    position: absolute;
+    top: 5vh;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    & > thead {
+      & > th {
+        color: gray;
+        font: {
+          size: 2.5vmin;
+          weight: 700;
+        }
+        &:first-child {
+          color: rgb(220, 118, 118);
+        }
+        &:last-child {
+          color: rgb(122, 122, 208);
+        }
+      }
+    }
+
+    .item {
+      color: gray;
+      border-radius: 35%;
+      background-color: $theme-color;
+      width: 8vmin;
+      min-width: 20px;
+      min-height: 20px;
+      height: 8vmin;
+      cursor: pointer;
+      font: {
+        size: 3vmin;
+        weight: 500;
+      }
+      &:last-child {
+        background-color: $theme-color;
+        color: rgb(122, 122, 208);
+      }
+      &:first-child,
+      &.holi {
+        background-color: $theme-color;
+        color: rgb(220, 118, 118);
+      }
+
+      &.empty {
+        cursor: default;
+        background: none;
+      }
+    }
+  }
+}
