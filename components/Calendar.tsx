@@ -12,7 +12,7 @@ import styles from "./Calendar.module.scss";
 const Calendar = () => {
   const dispatch = useDispatch();
   const {
-    holi,
+    init,
     curDate: { year, month },
   } = useSelector(
     (state: reduxStateType): calendarDataStateType => state.calendarData
@@ -21,9 +21,9 @@ const Calendar = () => {
   // 달력 불러오기
   const calendar = useCalendar(year, month);
 
-  // 현재 연도와 월을 달력 초기값으로 할당
+  // 현재 연도와 월을 달력 초기값으로 할당 (최초 1회 실행)
   useEffect(() => {
-    if (year === -1 && month === -1) {
+    if (!init) {
       const now = new Date();
 
       dispatch(
@@ -32,8 +32,10 @@ const Calendar = () => {
           month: now.getMonth() + 1,
         })
       );
+
+      dispatch(setCalendar.actions.setInit(true));
     }
-  }, [dispatch, month, year]);
+  }, [dispatch, month, year, init]);
 
   // 이전 달 버튼 클릭
   const onPrevMonthClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -86,7 +88,7 @@ const Calendar = () => {
 
   const onMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-    dispatch(setCalendar.actions.setCurDate({ year, month: value }));
+    dispatch(setCalendar.actions.setCurDate({ year, month: parseInt(value) }));
   };
 
   return (

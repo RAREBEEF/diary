@@ -84,7 +84,9 @@
         background-color: $theme-color;
         color: rgb(220, 118, 118);
       }
-
+      &.writed {
+        background-color: $sub-color;
+      }
       &.empty {
         cursor: default;
         background: none;

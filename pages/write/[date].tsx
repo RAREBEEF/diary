@@ -9,7 +9,7 @@ import { reduxStateType } from "../../redux/store";
 
 const Write = () => {
   const {
-    userData: { uid: uid },
+    userData: { uid },
   } = useSelector((state: reduxStateType) => state.loginData);
   const {
     value: title,
@@ -41,7 +41,6 @@ const Write = () => {
       !date ||
       typeof date !== "string"
     ) {
-      console.log("returned", uid, year, month, date);
       return;
     }
 

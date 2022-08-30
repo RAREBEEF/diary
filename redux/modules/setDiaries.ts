@@ -44,10 +44,12 @@ const getDiariesStart = () => {
   };
 };
 
-const getDiariesSuccess = (data: any) => {
+const getDiariesSuccess = (data: any, year: string, month: string) => {
   return {
     type: GET_DIARIES_SUCCESS,
     data,
+    year,
+    month,
   };
 };
 
@@ -64,22 +66,23 @@ export const getDiariesThunk = (uid: string, year: string, month: string) => {
       dispatch(getDiariesStart());
 
       await getDocs(query(collection(db, uid, year, month))).then((docSnap) => {
-        const yearlyData: any = {};
-        const monthlyData: any = {};
         const dailyData: any = {};
+        const monthlyData: any = {};
+        const finalData: any = {};
 
         docSnap.forEach((doc) => {
           dailyData[doc.id] = doc.data();
         });
 
         monthlyData[month] = dailyData;
-        yearlyData[year] = monthlyData;
+        finalData[year] = monthlyData;
 
-        dispatch(getDiariesSuccess(yearlyData));
+        dispatch(getDiariesSuccess(finalData, year, month));
       });
 
       dispatch(getDiariesSuccess);
     } catch (error) {
+      console.log(error);
       dispatch(getDiariesFail);
     }
   };
@@ -91,16 +94,29 @@ const reducer = (prev = initialState, action: any) => {
       return { ...prev, loading: true, error: null };
     }
     case GET_DIARIES_SUCCESS: {
+      let data: any = { ...prev.data };
+      let mergedData: any = {};
+      const year: string = action.year;
+      const month: string = action.month;
+
+      if (data[year]) {
+        // mergedData = {08: {title, content}, 09: {title, content}}
+        mergedData = { ...data[year][month], ...action.data[year][month] };
+        data[year][month] = { ...mergedData };
+      } else {
+        data = { ...data, ...action.data };
+      }
+
+      console.log(data);
+
       return {
-        ...prev,
         loading: false,
         error: null,
-        data: { ...prev.data, ...action.data },
+        data,
       };
     }
     case GET_DIARIES_FAIL: {
       return {
-        ...prev,
         loading: false,
         error: action.error,
         data: {},

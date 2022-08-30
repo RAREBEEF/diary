@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export default interface calendarDataStateType {
+  init: boolean;
   holi: Array<any>;
   curDate: {
     year: number;
@@ -10,7 +11,8 @@ export default interface calendarDataStateType {
 
 const initialState: calendarDataStateType = {
   holi: [],
-  curDate: { year: -1, month: -1 },
+  curDate: { year: 1998, month: 10 },
+  init: false,
 };
 
 export const setCalendar = createSlice({
@@ -20,10 +22,17 @@ export const setCalendar = createSlice({
     setHoli: (state, action) => {
       state.holi = action.payload;
       state.curDate = state.curDate;
+      state.init = state.init;
     },
     setCurDate: (state, action) => {
       state.holi = state.holi;
       state.curDate = action.payload;
+      state.init = state.init;
+    },
+    setInit: (state, action) => {
+      state.holi = state.holi;
+      state.curDate = state.curDate;
+      state.init = action.payload;
     },
   },
 });
