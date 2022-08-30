@@ -79,11 +79,8 @@ export const getDiariesThunk = (uid: string, year: string, month: string) => {
 
         dispatch(getDiariesSuccess(finalData, year, month));
       });
-
-      dispatch(getDiariesSuccess);
     } catch (error) {
-      console.log(error);
-      dispatch(getDiariesFail);
+      dispatch(getDiariesFail(error));
     }
   };
 };
@@ -106,8 +103,6 @@ const reducer = (prev = initialState, action: any) => {
       } else {
         data = { ...data, ...action.data };
       }
-
-      console.log(data);
 
       return {
         loading: false,

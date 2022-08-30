@@ -103,6 +103,12 @@ const Nav = () => {
             height: 30px;
           }
         }
+        @media (prefers-color-scheme: dark) {
+          nav {
+            background-color: black;
+            box-shadow: 0px -1px 5px #333333;
+          }
+        }
       `}</style>
     </nav>
   );

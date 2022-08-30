@@ -1,14 +1,13 @@
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import styles from "../components/Calendar.module.scss";
-import * as xml2js from "xml2js";
 import _ from "lodash";
 import { useSelector } from "react-redux";
 import { reduxStateType } from "../redux/store";
-import { setCalendar } from "../redux/modules/setCalendar";
 import { useDispatch } from "react-redux";
 import { getDiariesThunk } from "../redux/modules/setDiaries";
+import { getHoliThunk } from "../redux/modules/setHoli";
 
 /**
  * 연도와 월을 전달하면 해당 연도의 공휴일 데이터와 해당 달의 일기 데이터를 불러와 저장하고 해당 달의 달력을 반환함
@@ -17,11 +16,12 @@ import { getDiariesThunk } from "../redux/modules/setDiaries";
  */
 const useCalendar = (year: number, month: number) => {
   const {
-    calendarData: { holi, init },
+    calendarData: { init },
     loginData: {
       userData: { uid },
     },
     diariesData: { data: diaries },
+    holiData: { data: holi },
   } = useSelector((state: reduxStateType): reduxStateType => state);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -47,41 +47,16 @@ const useCalendar = (year: number, month: number) => {
     );
   };
 
-  /**
-   * 현재 달력 연도의 공휴일을 불러와서 저장하는 함수
-   * */
-  const getHoli = useCallback(async () => {
-    await fetch(
-      `https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo?solYear=${year}&numOfRows=100&ServiceKey=${process.env.NEXT_PUBLIC_HOLIDAY_API_KEY}`
-    )
-      .then((response) => response.text())
-      .then((data) => {
-        let parseString = xml2js.parseString;
-
-        parseString(data, function (err: any, result: any) {
-          const arr = result.response.body[0].items[0].item.map((el: any) =>
-            el.locdate[0].slice(4)
-          );
-          const prevHoli = { ...holi };
-          prevHoli[year] = arr;
-          dispatch(setCalendar.actions.setHoli(prevHoli));
-        });
-      })
-      .catch((error: any) => {
-        window.alert("공휴일 데이터를 불러오는데 실패하였습니다.");
-      });
-  }, [dispatch, holi, year]);
-
   // 연간 공휴일 데이터 불러오기
   // 연도가 바뀔 때 마다 실행됨
   // 해당 연도의 데이터가 이미 있거나 달력이 준비되지 않은 상태일 경우 api를 호출하지 않음
   useEffect(() => {
-    if (Object.keys(holi).indexOf(year.toString()) !== -1 || !init) {
+    if (holi[year] || !init) {
       return;
     }
 
-    getHoli();
-  }, [getHoli, holi, year, init]);
+    dispatch<any>(getHoliThunk(year.toString()));
+  }, [year, init, dispatch, holi]);
 
   // 월별 일기 데이터 불러오기
   // 달력의 월이 바뀔 때 마다 실행됨

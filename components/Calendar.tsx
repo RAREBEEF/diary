@@ -1,22 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import useCalendar from "../hooks/useCalendar";
-import calendarDataStateType, {
-  setCalendar,
-} from "../redux/modules/setCalendar";
+import { setCalendar } from "../redux/modules/setCalendar";
 import { reduxStateType } from "../redux/store";
 import Button from "./Button";
 import styles from "./Calendar.module.scss";
+import HoliLoading from "./HoliLoading";
+import Loading from "./Loading";
 
 const Calendar = () => {
   const dispatch = useDispatch();
   const {
-    init,
-    curDate: { year, month },
-  } = useSelector(
-    (state: reduxStateType): calendarDataStateType => state.calendarData
-  );
+    calendarData: {
+      init,
+      curDate: { year, month },
+    },
+    diariesData: { loading: diariesLoading },
+    holiData: { loading: holiLoading },
+  } = useSelector((state: reduxStateType): reduxStateType => state);
 
   // 달력 불러오기
   const calendar = useCalendar(year, month);
@@ -142,6 +144,8 @@ const Calendar = () => {
         </thead>
         <tbody>{calendar.map((el) => el)}</tbody>
       </table>
+      <Loading isShow={diariesLoading} />
+      <HoliLoading isShow={holiLoading}/>
     </main>
   );
 };
