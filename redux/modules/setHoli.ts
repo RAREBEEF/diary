@@ -38,6 +38,10 @@ export const getHoliThunk = (year: string) => {
     try {
       dispatch(getHoliStart());
 
+      if (!window.navigator.onLine) {
+        throw "Lost internet connection";
+      }
+
       let parsedData;
 
       await fetch(
@@ -56,7 +60,9 @@ export const getHoliThunk = (year: string) => {
 
       dispatch(getHoliSuccess(parsedData, year));
     } catch (error) {
-      window.alert("공휴일 데이터를 불러오는데 실패하였습니다.");
+      window.alert(
+        `공휴일 데이터를 불러오는데 실패하였습니다.\n통신 상태가 불안정하거나 범위를 넘어선 요청입니다.`
+      );
       dispatch(getHoliFail(error, year));
     }
   };

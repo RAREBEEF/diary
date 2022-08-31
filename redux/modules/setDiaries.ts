@@ -2,7 +2,7 @@ import { collection, getDocs, query } from "firebase/firestore";
 import React from "react";
 import { db } from "../../fb";
 
-// 데이터 구조
+// 데이터 구조 예시
 // {
 //   "2021": {
 //     "06": {
@@ -53,10 +53,12 @@ const getDiariesSuccess = (data: any, year: string, month: string) => {
   };
 };
 
-const getDiariesFail = (error: any) => {
+const getDiariesFail = (error: any, year: string, month: string) => {
   return {
     type: GET_DIARIES_FAIL,
     error,
+    year,
+    month,
   };
 };
 
@@ -64,6 +66,10 @@ export const getDiariesThunk = (uid: string, year: string, month: string) => {
   return async (dispatch: React.Dispatch<any>) => {
     try {
       dispatch(getDiariesStart());
+
+      if (!window.navigator.onLine) {
+        throw "Lost internet connection";
+      }
 
       await getDocs(query(collection(db, uid, year, month))).then((docSnap) => {
         const dailyData: any = {};
@@ -80,7 +86,10 @@ export const getDiariesThunk = (uid: string, year: string, month: string) => {
         dispatch(getDiariesSuccess(finalData, year, month));
       });
     } catch (error) {
-      dispatch(getDiariesFail(error));
+      window.alert(
+        `일기 데이터를 불러오는데 실패하였습니다.\n통신 상태를 확인해주세요.`
+      );
+      dispatch(getDiariesFail(error, year, month));
     }
   };
 };
@@ -90,14 +99,15 @@ const reducer = (prev = initialState, action: any) => {
     case GET_DIARIES_START: {
       return { ...prev, loading: true, error: null };
     }
+
     case GET_DIARIES_SUCCESS: {
       let data: any = { ...prev.data };
       let mergedData: any = {};
       const year: string = action.year;
       const month: string = action.month;
 
+      // 해당 연도에 다른 월 데이터가 이미 있을 경우 덮어쓰여져서 데이터가 사라지는 것을 방지
       if (data[year]) {
-        // mergedData = {08: {title, content}, 09: {title, content}}
         mergedData = { ...data[year][month], ...action.data[year][month] };
         data[year][month] = { ...mergedData };
       } else {
@@ -110,11 +120,17 @@ const reducer = (prev = initialState, action: any) => {
         data,
       };
     }
+
     case GET_DIARIES_FAIL: {
+      const data: any = { ...prev.data };
+      const monthlyData: any = {};
+      monthlyData[action.month] = {};
+      data[action.year] = { ...data[action.year], ...monthlyData };
+
       return {
         loading: false,
         error: action.error,
-        data: {},
+        data,
       };
     }
     default:

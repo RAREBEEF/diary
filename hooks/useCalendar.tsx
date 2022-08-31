@@ -21,7 +21,7 @@ const useCalendar = (year: number, month: number) => {
       userData: { uid },
     },
     diariesData: { data: diaries },
-    holiData: { data: holi },
+    holiData: { data: holi, error: holiError },
   } = useSelector((state: reduxStateType): reduxStateType => state);
   const dispatch = useDispatch();
   const router = useRouter();
