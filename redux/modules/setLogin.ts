@@ -1,15 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { User, UserCredential } from "firebase/auth";
 
 export interface loginDataStateType {
   init: boolean;
   isLoggedIn: boolean;
-  userData: { uid: string; displayName: string };
+  userData: { user: User | null; uid: string; displayName: string };
 }
 
 export const initialState: loginDataStateType = {
   init: false,
   isLoggedIn: false,
-  userData: { uid: "", displayName: "" },
+  userData: { user: null, uid: "", displayName: "" },
 };
 
 export const login = createSlice({

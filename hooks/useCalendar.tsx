@@ -27,7 +27,7 @@ const useCalendar = (year: number, month: number) => {
   const router = useRouter();
   const curMonthLastDate = new Date(year, month, 0).getDate();
   const prevMonthLastDay = new Date(year, month - 1, 0).getDay();
-
+  const today = new Date();
   /**
    * 날짜 클릭 이벤트 리스너,
    * 해당 날짜에 일기가 있을 경우 diary로, 없을 경우 wirte로 이동
@@ -112,6 +112,7 @@ const useCalendar = (year: number, month: number) => {
 
     let isHoli = false;
     let isWrited = false;
+    let isToday = false;
     // 공휴일
     if (holi[year] && holi[year].indexOf(searchKeyword) !== -1) {
       isHoli = true;
@@ -126,6 +127,14 @@ const useCalendar = (year: number, month: number) => {
     ) {
       isWrited = true;
     }
+    // 오늘 날짜
+    if (
+      year == today.getFullYear() &&
+      month === today.getMonth() + 1 &&
+      i === today.getDate()
+    ) {
+      isToday = true;
+    }
 
     allDaysArr.push(
       <td
@@ -133,7 +142,8 @@ const useCalendar = (year: number, month: number) => {
         className={classNames(
           styles.item,
           isHoli && styles.holi,
-          isWrited && styles.writed
+          isWrited && styles.writed,
+          isToday && styles.today
         )}
         onClick={() => {
           onDateClick(i, isWrited);

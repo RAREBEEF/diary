@@ -1,29 +1,29 @@
+import classNames from "classnames";
 import Image from "next/image";
 
 interface Props {
-  isShow: boolean;
+  isShow?: boolean;
+  text?: string;
 }
 
-const Loading: React.FC<Props> = ({ isShow = false }) => {
+const Loading: React.FC<Props> = ({ isShow = true, text = "로딩 중" }) => {
   return (
-    <div className={isShow ? "show" : ""}>
+    <div className={classNames(isShow ? "show" : "", "no-drag")}>
       <Image src="/vercel.svg" width="200" height="70" alt="Loading..." />
-      <p>로딩 중</p>
+      <p>{text}</p>
       <style jsx>{`
         div {
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
           width: 100%;
           height: 100vh;
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          position: absolute;
+          position: fixed;
           top: 0;
           bottom: 0;
+          left: 0;
+          right: 0;
           margin: auto;
           pointer-events: none;
           opacity: 0;

@@ -8,8 +8,10 @@ const HoliLoading: React.FC<Props> = ({ isShow }) => {
     <div className={isShow ? "show" : ""}>
       공휴일 정보를 불러오는 중
       <style jsx>{`
+        @import "../styles/var.scss";
+
         div {
-          background-color: gray;
+          background-color: $gray-color;
           width: 250px;
           text-align: center;
           margin: auto;

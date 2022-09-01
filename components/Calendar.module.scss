@@ -1,10 +1,6 @@
 @import "../styles/var.scss";
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap");
 
 .container {
-  font: {
-    family: "Roboto Mono", monospace;
-  }
   .nav {
     display: flex;
     justify-content: center;
@@ -45,10 +41,11 @@
     right: 0;
     & > thead {
       & > tr > th {
-        color: gray;
+        color: $gray-color;
         font: {
           size: 2.5vmin;
-          weight: 700;
+          weight: 500;
+          family: "Roboto Mono", monospace;
         }
         &:first-child {
           color: rgb(220, 118, 118);
@@ -60,7 +57,7 @@
     }
 
     .item {
-      color: gray;
+      color: $gray-color;
       border-radius: 35%;
       background-color: $theme-color;
       width: 8vmin;
@@ -83,6 +80,10 @@
       }
       &.writed {
         background-color: $sub-color;
+        color: white;
+      }
+      &.today {
+        border: 3px solid #8a8988;
       }
       &.empty {
         cursor: default;

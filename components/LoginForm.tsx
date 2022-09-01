@@ -11,26 +11,12 @@ import { useDispatch } from "react-redux";
 import { login } from "../redux/modules/setLogin";
 import { auth } from "../fb";
 
-const buttonStyle: CSSProperties = {
-  border: "1px solid gray",
-  borderRadius: "5px",
-  padding: "5px",
-};
-
 type formActionType = "login" | "signup" | "pwReset";
 
 const LoginForm = () => {
   const dispatch = useDispatch();
-  const {
-    value: email,
-    setValue: setEmail,
-    onChange: onEmailChange,
-  } = useInput("");
-  const {
-    value: displayName,
-    setValue: setDisplayName,
-    onChange: onDisplayNameChange,
-  } = useInput("");
+  const { value: email, onChange: onEmailChange } = useInput("");
+  const { value: displayName, onChange: onDisplayNameChange } = useInput("");
   const { value: pw, setValue: setPw, onChange: onPwChange } = useInput("");
   const {
     value: pwCheck,
@@ -39,6 +25,7 @@ const LoginForm = () => {
   } = useInput("");
   const { value: alert, setValue: setAlert } = useInput("");
   const [formAction, setFormAction] = useState<formActionType>("login");
+  const [loading, setLoading] = useState<boolean>(false);
 
   // 로그인 / 회원가입 전환
   const onFormActionChange = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -68,7 +55,23 @@ const LoginForm = () => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (formAction === "signup") {
+    if (loading) {
+      return;
+    }
+
+    if (formAction === "pwReset") {
+      setLoading(true);
+
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          setAlert("재설정 메일이 발송되었습니다.");
+        })
+        .catch((error) => {
+          setAlert(error.code);
+        });
+    } else if (formAction === "signup") {
+      setLoading(true);
+
       createUserWithEmailAndPassword(auth, email, pw)
         .then((userCredential) => {
           const user = userCredential.user;
@@ -79,7 +82,11 @@ const LoginForm = () => {
               login.actions.setLogIn({
                 init: true,
                 isLoggedIn: true,
-                userData: { uid: user.uid, displayName: user.displayName },
+                userData: {
+                  user,
+                  uid: user.uid,
+                  displayName: user.displayName,
+                },
               })
             );
           });
@@ -88,6 +95,8 @@ const LoginForm = () => {
           setAlert(error.code);
         });
     } else if (formAction === "login") {
+      setLoading(true);
+
       signInWithEmailAndPassword(auth, email, pw)
         .then((userCredential) => {
           const user = userCredential.user;
@@ -102,15 +111,9 @@ const LoginForm = () => {
         .catch((error) => {
           setAlert(error.code);
         });
-    } else if (formAction === "pwReset") {
-      sendPasswordResetEmail(auth, email)
-        .then(() => {
-          setAlert("재설정 메일이 발송되었습니다.");
-        })
-        .catch((error) => {
-          setAlert(error.code);
-        });
     }
+
+    setLoading(false);
   };
 
   return (
@@ -135,20 +138,11 @@ const LoginForm = () => {
               onChange={onPwChange}
             />
           </section>
-          <Button
-            text="로그인"
-            style={{ ...buttonStyle, backgroundColor: "black", color: "white" }}
-          />
-          <Button
-            text="회원가입하기"
-            onClick={onFormActionChange}
-            style={buttonStyle}
-          />
-          <Button
-            text="비밀번호 재설정"
-            style={buttonStyle}
-            onClick={onFormActionToPwReset}
-          />
+          <Button style={{ backgroundColor: "black", color: "white" }}>
+            로그인
+          </Button>
+          <Button onClick={onFormActionChange}>회원가입하기</Button>
+          <Button onClick={onFormActionToPwReset}>비밀번호 재설정</Button>
         </section>
       )}
 
@@ -182,15 +176,10 @@ const LoginForm = () => {
               onChange={onPwCheckChange}
             />
           </section>
-          <Button
-            text="회원가입"
-            style={{ ...buttonStyle, backgroundColor: "black", color: "white" }}
-          />
-          <Button
-            text="로그인하기"
-            onClick={onFormActionChange}
-            style={buttonStyle}
-          />
+          <Button style={{ backgroundColor: "black", color: "white" }}>
+            회원가입
+          </Button>
+          <Button onClick={onFormActionChange}>기존 계정으로 로그인</Button>
         </section>
       )}
 
@@ -205,19 +194,16 @@ const LoginForm = () => {
               onChange={onEmailChange}
             />
           </section>
-          <Button
-            text="재설정 메일 발송"
-            style={{ ...buttonStyle, backgroundColor: "black", color: "white" }}
-          />
-          <Button
-            text="로그인하기"
-            onClick={onFormActionChange}
-            style={buttonStyle}
-          />
+          <Button style={{ backgroundColor: "black", color: "white" }}>
+            재설정 메일 발송
+          </Button>
+          <Button onClick={onFormActionChange}>로그인하기</Button>
         </section>
       )}
 
       <style jsx>{`
+        @import "../styles/var.scss";
+
         form {
           flex-grow: 1;
           display: flex;
@@ -259,7 +245,7 @@ const LoginForm = () => {
               gap: 5px;
               margin-bottom: 10px;
               input {
-                border: 1px solid gray;
+                border: 1px solid $gray-color;
                 border-radius: 5px;
                 padding: {
                   left: 5px;

@@ -9,6 +9,7 @@ import { reduxStateType } from "../../redux/store";
 const Diary = () => {
   const {
     loginData: {
+      isLoggedIn,
       userData: { uid },
     },
     diariesData: { data: diaries },
@@ -18,10 +19,17 @@ const Diary = () => {
   const queryDate = router.query.date;
   const [diary, setDiary] = useState<any>({});
   const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
-
+  const [redirectToWrite, setRedirectToWrite] = useState<boolean>(false);
+  const [redirectToLogin, setRedirectToLogin] = useState<boolean>(false);
+  const [init, setInit] = useState<boolean>(false);
   // 날짜에 해당하는 일기 가져오기
   useEffect(() => {
-    // url(날짜) 체크
+    // 로그인 여부와 url(날짜) 체크
+    if (!isLoggedIn) {
+      setRedirectToLogin(true);
+      return;
+    }
+
     if (
       !queryDate ||
       typeof queryDate !== "string" ||
@@ -42,27 +50,34 @@ const Diary = () => {
       return;
     }
 
-    // 해당하는 일기가 없을 경우 홈으로 이동
+    // 해당하는 일기가 없을 경우 작성으로 이동
     // 일기가 있을 경우 출력
     if (
       !diaries[year] ||
       !diaries[year][month] ||
       !diaries[year][month][date]
     ) {
-      setRedirectToHome(true);
+      setRedirectToWrite(true);
       return;
     } else {
+      setInit(true);
       setDiary(diaries[year][month][date]);
     }
-  }, [diaries, dispatch, queryDate, redirectToHome, router, uid]);
+  }, [diaries, dispatch, isLoggedIn, queryDate, redirectToHome, router, uid]);
 
   // 홈으로 이동
   // push를 이렇게 따로 분리하지 않을 경우 Abort fetching component for route: "/" 에러가 출력된다.
   useEffect(() => {
     redirectToHome && router.push("/");
-  }, [redirectToHome, router]);
+    redirectToWrite && router.push(`/diary/${queryDate}`);
+    redirectToLogin && router.push("/login");
+  }, [queryDate, redirectToHome, redirectToLogin, redirectToWrite, router]);
 
-  return <section>{diary.title}</section>;
+  return init ? (
+    <section className="page-container">{diary.title}</section>
+  ) : (
+    <></>
+  );
 };
 
 export default Diary;

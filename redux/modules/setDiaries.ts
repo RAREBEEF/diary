@@ -37,6 +37,7 @@ export interface DiariesDataStateType {
 export const GET_DIARIES_START = "GET_DIARIES_START";
 export const GET_DIARIES_SUCCESS = "GET_DIARIES_SUCCESS";
 export const GET_DIARIES_FAIL = "GET_DIARIES_FAIL";
+export const DIARY_INITIALIZATION = "DIARY_INITIALIZATION";
 
 const getDiariesStart = () => {
   return {
@@ -59,6 +60,12 @@ const getDiariesFail = (error: any, year: string, month: string) => {
     error,
     year,
     month,
+  };
+};
+
+export const diaryInitialization = () => {
+  return {
+    type: DIARY_INITIALIZATION,
   };
 };
 
@@ -87,7 +94,7 @@ export const getDiariesThunk = (uid: string, year: string, month: string) => {
       });
     } catch (error) {
       window.alert(
-        `일기 데이터를 불러오는데 실패하였습니다.\n통신 상태를 확인해주세요.`
+        `일기 데이터를 불러오는데 실패하였습니다.\n통신 상태를 확인해 주세요.`
       );
       dispatch(getDiariesFail(error, year, month));
     }
@@ -133,6 +140,15 @@ const reducer = (prev = initialState, action: any) => {
         data,
       };
     }
+
+    case DIARY_INITIALIZATION: {
+      return {
+        data: {},
+        loading: false,
+        error: null,
+      };
+    }
+
     default:
       return prev;
   }

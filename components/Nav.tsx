@@ -1,19 +1,26 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+// import { useRouter } from "next/router";
+// import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { loginDataStateType } from "../redux/modules/setLogin";
 import { reduxStateType } from "../redux/store";
 
 const Nav = () => {
-  const {
-    isLoggedIn,
-    userData: { uid },
-  } = useSelector(
+  // const router = useRouter();
+  const { isLoggedIn } = useSelector(
     (state: reduxStateType): loginDataStateType => state.loginData
   );
-
   const today = new Date();
+
+  // useEffect(() => {
+  //   const path = router.pathname;
+  //   console.log(path);
+  //   console.log(/^\/profile|^\/write|\/diary/gi.test(path));
+  //   if (isLoggedIn) {
+  //     return;
+  //   }
+  // }, [isLoggedIn, router.pathname]);
 
   return (
     <nav>
@@ -64,7 +71,7 @@ const Nav = () => {
           display: flex;
           box-sizing: border-box;
           background-color: white;
-          box-shadow: 0px -1px 5px gray;
+          box-shadow: 0px -1px 5px $gray-color;
 
           a {
             transition: filter 0.3s;

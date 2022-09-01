@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -13,7 +14,6 @@ const Calendar = () => {
   const dispatch = useDispatch();
   const {
     calendarData: {
-      init,
       curDate: { year, month },
     },
     diariesData: { loading: diariesLoading },
@@ -22,22 +22,6 @@ const Calendar = () => {
 
   // 달력 불러오기
   const calendar = useCalendar(year, month);
-
-  // 현재 연도와 월을 달력 초기값으로 할당 (최초 1회 실행)
-  useEffect(() => {
-    if (!init) {
-      const now = new Date();
-
-      dispatch(
-        setCalendar.actions.setCurDate({
-          year: now.getFullYear(),
-          month: now.getMonth() + 1,
-        })
-      );
-
-      dispatch(setCalendar.actions.setInit(true));
-    }
-  }, [dispatch, month, year, init]);
 
   // 이전 달 버튼 클릭
   const onPrevMonthClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -56,7 +40,12 @@ const Calendar = () => {
     e.preventDefault();
     // 현재 달력이 12월일 경우 연도를 하나 올리고 1월로 이동
     if (month === 12) {
-      dispatch(setCalendar.actions.setCurDate({ year: year + 1, month: 1 }));
+      dispatch(
+        setCalendar.actions.setCurDate({
+          year: typeof year !== "number" ? parseInt(year) + 1 : year + 1,
+          month: 1,
+        })
+      );
       //  아니면 그냥 월만 하나 올림
     } else {
       dispatch(setCalendar.actions.setCurDate({ year, month: month + 1 }));
@@ -96,13 +85,14 @@ const Calendar = () => {
   return (
     <main className={styles.container}>
       <nav className={styles.nav}>
-        <Button
-          text="Prev month"
-          imgSrc="/angle-left-solid.svg"
-          imgWidth={25}
-          imgHeight={25}
-          onClick={onPrevMonthClick}
-        />
+        <Button onClick={onPrevMonthClick} style={{ border: "none" }}>
+          <Image
+            src="/angle-left-solid.svg"
+            width={25}
+            height={25}
+            alt="Previous month"
+          />
+        </Button>
         <div>
           <select onChange={onYearChange} value={year}>
             {yearOptionsGen().map((el) => el)}
@@ -122,13 +112,14 @@ const Calendar = () => {
             <option value={12}>12</option>
           </select>
         </div>
-        <Button
-          text="Next month"
-          imgSrc="/angle-left-solid.svg"
-          imgWidth={25}
-          imgHeight={25}
-          onClick={onNextMonthClick}
-        />
+        <Button onClick={onNextMonthClick} style={{ border: "none" }}>
+          <Image
+            src="/angle-left-solid.svg"
+            width={25}
+            height={25}
+            alt="Next month"
+          />
+        </Button>
       </nav>
       <table>
         <thead>
@@ -145,7 +136,7 @@ const Calendar = () => {
         <tbody>{calendar.map((el) => el)}</tbody>
       </table>
       <Loading isShow={diariesLoading} />
-      <HoliLoading isShow={holiLoading}/>
+      <HoliLoading isShow={holiLoading} />
     </main>
   );
 };
