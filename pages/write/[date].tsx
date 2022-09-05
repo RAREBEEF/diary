@@ -7,12 +7,11 @@ import { db, storage } from "../../fb";
 import { useSelector } from "react-redux";
 import { reduxStateType } from "../../redux/store";
 import { useDispatch } from "react-redux";
-import { getDiariesThunk } from "../../redux/modules/setDiaries";
+import { getDiariesThunk, setDiaryThunk } from "../../redux/modules/setDiaries";
 import { getHoliThunk } from "../../redux/modules/setHoli";
 import Loading from "../../components/Loading";
 import Link from "next/link";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { v4 as uuidv4 } from "uuid";
 
 const Write = () => {
   const dispatch = useDispatch();
@@ -23,7 +22,7 @@ const Write = () => {
       userData: { uid },
       isLoggedIn,
     },
-    diariesData: { data: diaries },
+    diariesData: { data: diaries, loading },
   } = useSelector((state: reduxStateType): reduxStateType => state);
   const { value: title, onChange: onTitleChange } = useInput("");
   const { value: weather, onChange: onWeatherChange } = useInput("");
@@ -34,7 +33,6 @@ const Write = () => {
   const [redirectToDiary, setRedirectToDiary] = useState<boolean>(false);
   const [redirectToLogin, setRedirectToLogin] = useState<boolean>(false);
   const [init, setInit] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const [{ year, month, date }, setDate] = useState<{
     year: string;
     month: string;
@@ -87,7 +85,7 @@ const Write = () => {
     }
 
     // 해당하는 일기가 없을 경우 계속 작성
-    // 이미 일기가 있을 경우 홈으로 이동
+    // 이미 일기가 있을 경우 일기로 이동
     if (
       !diaries[year] ||
       !diaries[year][month] ||
@@ -112,53 +110,34 @@ const Write = () => {
   ]);
 
   // 일기 업로드
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setLoading(true);
-
-    let attachmentUrl: string = "";
-    let attachmentId: string = "";
-
-    // 첨부 이미지가 존재할 경우
-    // 스토리지에 이미지 업로드 후 url 받아오기
-    if (attachment) {
-      attachmentId = uuidv4();
-      const storageRef = ref(storage, `${uid}/${attachmentId}`);
-
-      uploadBytes(storageRef, attachment).then(() => {
-        getDownloadURL(storageRef).then((url) => {
-          attachmentUrl = url;
-        });
-      });
+    if (loading) {
+      return;
     }
 
-    try {
-      await setDoc(doc(db, uid, year, month, date), {
-        title,
-        weather,
-        mood,
-        content,
-        attachmentUrl,
-        attachmentId,
-      });
-      dispatch<any>(getDiariesThunk(uid, year, month));
-    } catch (error) {
-      window.alert(
-        `일기 업로드에 실패하였습니다.\n잠시 후 다시 시도해 주세요.`
-      );
-    }
+    const diaryData = {
+      attachmentUrl: "",
+      attachmentId: "",
+      title,
+      weather,
+      mood,
+      content,
+    };
 
-    setLoading(false);
+    dispatch<any>(
+      setDiaryThunk(
+        diaryData,
+        attachment,
+        uid,
+        year,
+        month,
+        date,
+        setRedirectToDiary
+      )
+    );
   };
-
-  // 리디렉션
-  // push를 이렇게 따로 분리하지 않을 경우 Abort fetching component for route: "/" 에러가 출력된다.
-  useEffect(() => {
-    redirectToHome && router.push("/");
-    redirectToDiary && router.push(`/diary/${queryDate}`);
-    redirectToLogin && router.push("/login");
-  }, [queryDate, redirectToDiary, redirectToHome, redirectToLogin, router]);
 
   // 작성할 일기가 오늘 일자인지 체크
   useEffect(() => {
@@ -195,6 +174,18 @@ const Write = () => {
     setAttachment(null);
   };
 
+  // 리디렉션
+  // push를 이렇게 따로 분리하지 않을 경우 Abort fetching component for route: "/" 에러가 출력된다.
+  useEffect(() => {
+    if (redirectToDiary) {
+      router.push(`/diary/${queryDate}`);
+    } else if (redirectToHome) {
+      router.push("/");
+    } else if (redirectToLogin) {
+      router.push("/login");
+    }
+  }, [queryDate, redirectToDiary, redirectToHome, redirectToLogin, router]);
+
   return init ? (
     <section className="page-container">
       <Loading isShow={loading} text="업로드 중" />
@@ -218,7 +209,7 @@ const Write = () => {
             onChange={onTitleChange}
             placeholder={`${todayOrTheDay}의 제목`}
           />
-          <section className="etc-input-wrapper">
+          <div className="etc-input-wrapper">
             <input
               className="weather"
               type="text"
@@ -235,14 +226,14 @@ const Write = () => {
               placeholder={`${todayOrTheDay}의 기분`}
               size={10}
             />
-          </section>
+          </div>
           <textarea
             className="content"
             value={content}
             onChange={onContentChange}
             placeholder={`${todayOrTheDay}의 하루`}
           />
-          <section>
+          <div>
             <input
               id="attachment-input"
               type="file"
@@ -266,7 +257,7 @@ const Write = () => {
                 사진 첨부하기
               </label>
             )}
-          </section>
+          </div>
         </div>
 
         <Button

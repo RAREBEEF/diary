@@ -71,16 +71,17 @@
       }
       &:last-child {
         background-color: $theme-color;
-        color: rgb(122, 122, 208);
+        color: rgb(122, 122, 208) !important;
       }
       &:first-child,
       &.holi {
         background-color: $theme-color;
-        color: rgb(220, 118, 118);
+        color: rgb(220, 118, 118) !important;
       }
       &.writed {
-        background-color: $sub-color;
-        color: white;
+        // background-color: $sub-color;
+        // color: white;
+        filter: brightness(0.8);
       }
       &.today {
         border: 3px solid #8a8988;
