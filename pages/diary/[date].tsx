@@ -11,6 +11,7 @@ import {
 } from "../../redux/modules/setDiaries";
 import { getHoliThunk } from "../../redux/modules/setHoli";
 import { reduxStateType } from "../../redux/store";
+import { DiaryType } from "../../type";
 
 const Diary = () => {
   const {
@@ -23,7 +24,15 @@ const Diary = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryDate = router.query.date;
-  const [diary, setDiary] = useState<any>({});
+  const [diary, setDiary] = useState<DiaryType>({
+    attachmentUrl: "",
+    attachmentId: "",
+    date: "",
+    title: "",
+    weather: "",
+    mood: "",
+    content: "",
+  });
   const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
   const [redirectToWrite, setRedirectToWrite] = useState<boolean>(false);
   const [redirectToLogin, setRedirectToLogin] = useState<boolean>(false);
@@ -38,6 +47,8 @@ const Diary = () => {
     month: "",
     date: "",
   });
+
+  console.log(diaries);
 
   // 쿼리로 받은 날짜를 상태에 저장
   useEffect(() => {
@@ -72,8 +83,11 @@ const Diary = () => {
       return;
     }
 
-    // diary 객체가 비어있을 경우 데이터 로드 및 공휴일 데이터 불러오기
-    if (Object.keys(diaries).length === 0) {
+    // 해당 날짜의 일기 데이터가 비어있을 경우 데이터 로드 및 공휴일 데이터 불러오기
+    if (
+      Object.keys(diaries).indexOf(year) === -1 ||
+      Object.keys(diaries[year]).indexOf(month) === -1
+    ) {
       dispatch<any>(getDiariesThunk(uid, year, month));
       dispatch<any>(getHoliThunk(year));
       return;
@@ -130,7 +144,7 @@ const Diary = () => {
 
     if (ok) {
       dispatch<any>(
-        deleteDiaryThunk(diary.attachmentId, uid, year, month, date)
+        deleteDiaryThunk(diary?.attachmentId, uid, year, month, date)
       );
       setRedirectToHome(true);
     }

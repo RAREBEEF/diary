@@ -1,13 +1,13 @@
 import type { NextPage } from "next";
 import Calendar from "../components/Calendar";
-import DiaryList from "../components/DiaryList";
+import PeriodList from "../components/PeriodList";
 import Footer from "../components/Footer";
 
 const Home: NextPage = () => {
   return (
     <section className="page-container">
       <Calendar />
-      <DiaryList />
+      <PeriodList />
       <Footer />
       <style jsx global>{`
         @import "../styles/var.scss";

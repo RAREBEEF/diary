@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           .page-container {
             min-width: $min-width;
             padding-bottom: $nav-height;
-            /* min-height: 100vh; */
+            min-height: 100vh;
           }
 
           @media all and (max-height: 420px) {

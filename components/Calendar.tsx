@@ -72,12 +72,10 @@ const Calendar = () => {
   };
 
   // select의 체인지 이벤트 리스너
-
   const onYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
     dispatch(setCalendar.actions.setCurDate({ year: value, month }));
   };
-
   const onMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
     dispatch(setCalendar.actions.setCurDate({ year, month: parseInt(value) }));

@@ -3,6 +3,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  orderBy,
   query,
   setDoc,
 } from "firebase/firestore";
@@ -15,9 +16,11 @@ import {
 import React from "react";
 import { db, storage } from "../../fb";
 import { v4 as uuidv4 } from "uuid";
+import { DiaryType } from "../../type";
 
 export interface DiariesDataStateType {
   data: any;
+  periodData: Array<DiaryType>;
   loading: boolean;
   error: any;
 }
@@ -32,6 +35,9 @@ export const DELETE_DIARY_START = "DELETE_DIARY_START";
 export const DELETE_DIARY_SUCCESS = "DELETE_DIARY_SUCCESS";
 export const DELETE_DIARY_FAIL = "DELETE_DIARY_FAIL";
 export const DIARY_INITIALIZATION = "DIARY_INITIALIZATION";
+export const GET_PERIOD_START = "GET_PERIOD_START";
+export const GET_PERIOD_SUCCESS = "GET_PERIOD_SUCCESS";
+export const GET_PERIOD_FAIL = "GET_PERIOD_FAIL";
 
 const getDiariesStart = () => {
   return {
@@ -117,8 +123,28 @@ export const diaryInitialization = () => {
   };
 };
 
+const getPeriodStart = () => {
+  return {
+    type: GET_PERIOD_START,
+  };
+};
+
+const getPeriodSuccess = (periodData: Array<any>) => {
+  return {
+    type: GET_PERIOD_SUCCESS,
+    periodData,
+  };
+};
+
+const getPeriodFail = (error: any) => {
+  return {
+    type: GET_PERIOD_FAIL,
+    error,
+  };
+};
+
 export const setDiaryThunk = (
-  diaryData: any,
+  diaryData: DiaryType,
   attachment: File | null,
   uid: string,
   year: string,
@@ -213,6 +239,43 @@ export const getDiariesThunk = (uid: string, year: string, month: string) => {
   };
 };
 
+export const getPeriodDiariesThunk = (
+  uid: string,
+  periodArr: Array<Array<any>>
+) => {
+  return async (dispatch: React.Dispatch<any>) => {
+    try {
+      dispatch(getPeriodStart());
+
+      if (!window.navigator.onLine) {
+        throw "Lost internet connection";
+      }
+
+      const data: Array<any> = [];
+
+      periodArr.forEach(async (period) => {
+        await getDocs(
+          query(
+            collection(db, uid, period[0], period[1]),
+            orderBy("date", "desc")
+          )
+        ).then((docSnap) => {
+          docSnap.forEach((doc) => {
+            data.push(doc.data());
+          });
+        });
+      });
+
+      dispatch(getPeriodSuccess(data));
+    } catch (error) {
+      window.alert(
+        `일기 데이터를 불러오는데 실패하였습니다.\n통신 상태를 확인해 주세요.`
+      );
+      dispatch(getPeriodFail(error));
+    }
+  };
+};
+
 const reducer = (prev = initialState, action: any) => {
   switch (action.type) {
     case GET_DIARIES_START: {
@@ -234,6 +297,7 @@ const reducer = (prev = initialState, action: any) => {
       }
 
       return {
+        ...prev,
         loading: false,
         error: null,
         data,
@@ -247,6 +311,7 @@ const reducer = (prev = initialState, action: any) => {
       data[action.year] = { ...data[action.year], ...monthlyData };
 
       return {
+        ...prev,
         loading: false,
         error: action.error,
         data,
@@ -311,9 +376,33 @@ const reducer = (prev = initialState, action: any) => {
 
     case DIARY_INITIALIZATION: {
       return {
+        ...prev,
         data: {},
+        periodData: [],
         loading: false,
         error: null,
+      };
+    }
+
+    case GET_PERIOD_START: {
+      return { ...prev, loading: true, error: null, periodData: [] };
+    }
+
+    case GET_PERIOD_SUCCESS: {
+      return {
+        ...prev,
+        loading: false,
+        error: null,
+        periodData: action.periodData,
+      };
+    }
+
+    case GET_PERIOD_FAIL: {
+      return {
+        ...prev,
+        loading: false,
+        error: action.error,
+        periodData: [],
       };
     }
 
@@ -324,6 +413,7 @@ const reducer = (prev = initialState, action: any) => {
 
 const initialState = {
   data: {},
+  periodData: [],
   loading: false,
   error: null,
 };

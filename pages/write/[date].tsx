@@ -2,8 +2,6 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import Button from "../../components/Button";
 import useInput from "../../hooks/useInput";
-import { doc, setDoc } from "firebase/firestore";
-import { db, storage } from "../../fb";
 import { useSelector } from "react-redux";
 import { reduxStateType } from "../../redux/store";
 import { useDispatch } from "react-redux";
@@ -11,7 +9,6 @@ import { getDiariesThunk, setDiaryThunk } from "../../redux/modules/setDiaries";
 import { getHoliThunk } from "../../redux/modules/setHoli";
 import Loading from "../../components/Loading";
 import Link from "next/link";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Write = () => {
   const dispatch = useDispatch();
@@ -120,6 +117,8 @@ const Write = () => {
     const diaryData = {
       attachmentUrl: "",
       attachmentId: "",
+      date:
+        typeof queryDate === "string" ? queryDate : `${year}${month}${date}`,
       title,
       weather,
       mood,
@@ -250,6 +249,8 @@ const Write = () => {
               <option value="신남 🥳">신남 🥳</option>
               <option value="설렘 🥰">설렘 🥰</option>
               <option value="긴장 😰">긴장 😰</option>
+              <option value="분노 😡">분노 😡</option>
+              <option value="멘붕 🤯">멘붕 🤯</option>
             </datalist>
           </div>
           <textarea
