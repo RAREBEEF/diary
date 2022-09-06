@@ -204,28 +204,53 @@ const Write = () => {
         <div className="input-wrapper">
           <input
             className="title"
+            list="title-list"
             type="text"
             value={title}
             onChange={onTitleChange}
             placeholder={`${todayOrTheDay}의 제목`}
           />
+          <datalist id="title-list">
+            <option
+              value={`${year} / ${month} / ${date}`}
+            >{`${year} / ${month} / ${date}`}</option>
+          </datalist>
           <div className="etc-input-wrapper">
             <input
               className="weather"
+              list="weather-list"
               type="text"
               value={weather}
               onChange={onWeatherChange}
               placeholder={`${todayOrTheDay}의 날씨`}
               size={10}
             />
+            <datalist id="weather-list">
+              <option value="맑음 ☀️">맑음 ☀️</option>
+              <option value="흐림 ⛅️">흐림 ⛅️</option>
+              <option value="비 🌦">비 🌦</option>
+              <option value="눈 🌨">눈 🌨</option>
+              <option value="소나기 🌧">소나기 🌧</option>
+              <option value="태풍 🌪">태풍 🌪</option>
+              <option value="안개 🌫">안개 🌫</option>
+            </datalist>
             <input
               className="mood"
+              list="mood-list"
               type="text"
               value={mood}
               onChange={onMoodChange}
               placeholder={`${todayOrTheDay}의 기분`}
               size={10}
             />
+            <datalist id="mood-list">
+              <option value="보통 😐">보통 😐</option>
+              <option value="기쁨 😃">기쁨 😃</option>
+              <option value="슬픔 😢">슬픔 😢</option>
+              <option value="신남 🥳">신남 🥳</option>
+              <option value="설렘 🥰">설렘 🥰</option>
+              <option value="긴장 😰">긴장 😰</option>
+            </datalist>
           </div>
           <textarea
             className="content"
@@ -328,7 +353,8 @@ const Write = () => {
                 display: flex;
                 flex-wrap: wrap;
                 row-gap: 5px;
-                input {
+                input,
+                datalist {
                   flex-grow: 1;
                   flex-basis: 10px;
                 }
@@ -336,7 +362,8 @@ const Write = () => {
 
               input,
               textarea,
-              label {
+              label,
+              datalist {
                 padding: 10px;
                 font: {
                   size: 16px;

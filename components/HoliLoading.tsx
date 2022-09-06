@@ -22,7 +22,7 @@ const HoliLoading: React.FC<Props> = ({ isShow }) => {
           opacity: 0;
           pointer-events: none;
           transition: opacity 0.3s 1s;
-          position: absolute;
+          position: fixed;
           left: 0;
           right: 0;
           bottom: 12vh;

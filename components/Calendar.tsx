@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -83,7 +84,7 @@ const Calendar = () => {
   };
 
   return (
-    <main className={styles.container}>
+    <main className={classNames(styles.container, "container")}>
       <nav className={styles.nav}>
         <Button onClick={onPrevMonthClick} style={{ border: "none" }}>
           <Image
