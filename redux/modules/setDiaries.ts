@@ -19,7 +19,13 @@ import { v4 as uuidv4 } from "uuid";
 import { DiaryType } from "../../type";
 
 export interface DiariesDataStateType {
+  /**
+   * 일기 데이터, 달력과 "/diary" 페이지의 일기 출력에 사용
+   * */
   data: any;
+  /**
+   * 기간별 일기 목록 데이터
+   * */
   periodData: Array<DiaryType>;
   loading: boolean;
   error: any;
@@ -35,6 +41,7 @@ export const DELETE_DIARY_START = "DELETE_DIARY_START";
 export const DELETE_DIARY_SUCCESS = "DELETE_DIARY_SUCCESS";
 export const DELETE_DIARY_FAIL = "DELETE_DIARY_FAIL";
 export const DIARY_INITIALIZATION = "DIARY_INITIALIZATION";
+export const PERIOD_INITIALIZATION = "PERIOD_INITIALIZATION";
 export const GET_PERIOD_START = "GET_PERIOD_START";
 export const GET_PERIOD_SUCCESS = "GET_PERIOD_SUCCESS";
 export const GET_PERIOD_FAIL = "GET_PERIOD_FAIL";
@@ -123,13 +130,19 @@ export const diaryInitialization = () => {
   };
 };
 
+export const periodInitialization = () => {
+  return {
+    type: PERIOD_INITIALIZATION,
+  };
+};
+
 const getPeriodStart = () => {
   return {
     type: GET_PERIOD_START,
   };
 };
 
-const getPeriodSuccess = (periodData: Array<any>) => {
+const getPeriodSuccess = (periodData: Array<DiaryType>) => {
   return {
     type: GET_PERIOD_SUCCESS,
     periodData,
@@ -241,7 +254,8 @@ export const getDiariesThunk = (uid: string, year: string, month: string) => {
 
 export const getPeriodDiariesThunk = (
   uid: string,
-  periodArr: Array<Array<any>>
+  year: string,
+  month: string
 ) => {
   return async (dispatch: React.Dispatch<any>) => {
     try {
@@ -251,22 +265,21 @@ export const getPeriodDiariesThunk = (
         throw "Lost internet connection";
       }
 
-      const data: Array<any> = [];
+      const periodData: Array<any> = [];
 
-      periodArr.forEach(async (period) => {
-        await getDocs(
-          query(
-            collection(db, uid, period[0], period[1]),
-            orderBy("date", "desc")
-          )
-        ).then((docSnap) => {
+      await getDocs(
+        query(collection(db, uid, year, month), orderBy("date", "desc"))
+      ).then((docSnap) => {
+        if (docSnap.empty) {
+          return;
+        } else {
           docSnap.forEach((doc) => {
-            data.push(doc.data());
+            periodData.push(doc.data());
           });
-        });
+        }
       });
 
-      dispatch(getPeriodSuccess(data));
+      dispatch(getPeriodSuccess(periodData));
     } catch (error) {
       window.alert(
         `일기 데이터를 불러오는데 실패하였습니다.\n통신 상태를 확인해 주세요.`
@@ -384,8 +397,17 @@ const reducer = (prev = initialState, action: any) => {
       };
     }
 
+    case PERIOD_INITIALIZATION: {
+      return {
+        ...prev,
+        periodData: [],
+        loading: false,
+        error: null,
+      };
+    }
+
     case GET_PERIOD_START: {
-      return { ...prev, loading: true, error: null, periodData: [] };
+      return { ...prev, loading: true, error: null };
     }
 
     case GET_PERIOD_SUCCESS: {
@@ -393,7 +415,7 @@ const reducer = (prev = initialState, action: any) => {
         ...prev,
         loading: false,
         error: null,
-        periodData: action.periodData,
+        periodData: [...prev.periodData, ...action.periodData],
       };
     }
 

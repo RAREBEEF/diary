@@ -48,8 +48,6 @@ const Diary = () => {
     date: "",
   });
 
-  console.log(diaries);
-
   // 쿼리로 받은 날짜를 상태에 저장
   useEffect(() => {
     //  url(날짜) 체크
@@ -203,24 +201,28 @@ const Diary = () => {
             )}
           </div>
         )}
-        {diary.attachmentUrl && (
-          <section className="image-wrapper">
-            <h4> {`${todayOrTheDay}의 사진`}</h4>
-            <Image
-              src={diary.attachmentUrl}
-              alt={"attachment"}
-              width={100}
-              height={60}
-              layout="responsive"
-              objectFit="contain"
-            />
-          </section>
-        )}
+        <div className="main-content-wrapper">
+          {diary.attachmentUrl && (
+            <section className="image">
+              <h4> {`${todayOrTheDay}의 사진`}</h4>
+              <div className="image-wrapper">
+                <Image
+                  src={diary.attachmentUrl}
+                  alt={"attachment"}
+                  width={100}
+                  height={80}
+                  layout="responsive"
+                  objectFit="contain"
+                />
+              </div>
+            </section>
+          )}
 
-        <section className="content">
-          <h4> {`${todayOrTheDay}의 하루`}</h4>
-          <p>{diary.content}</p>
-        </section>
+          <section className="content">
+            <h4> {`${todayOrTheDay}의 하루`}</h4>
+            <p>{diary.content}</p>
+          </section>
+        </div>
       </section>
 
       <style jsx>{`
@@ -244,6 +246,7 @@ const Diary = () => {
           nav {
             padding: {
               top: 50px;
+              bottom: 10px;
             }
 
             .btn-wrapper {
@@ -282,11 +285,12 @@ const Diary = () => {
             display: flex;
             flex-direction: column;
             height: 100%;
-            gap: 10px;
+            gap: 30px;
             margin-bottom: 35px;
 
             section {
               padding: 10px;
+              border-bottom: 0.5px solid $gray-color;
               font: {
                 size: 16px;
               }
@@ -319,14 +323,55 @@ const Diary = () => {
               }
             }
 
-            .image-wrapper {
-              width: 100%;
-              margin: auto;
-            }
+            .main-content-wrapper {
+              display: flex;
+              justify-content: flex-start;
+              flex-wrap: wrap;
+              gap: 5%;
 
-            .content {
-              white-space: pre-line;
-              flex-grow: 1;
+              .image,
+              .content {
+                padding-bottom: 40px;
+              }
+
+              .image {
+                /* width: 100%; */
+                width: 50%;
+                /* margin: auto; */
+                border: 0.5px solid $gray-color;
+                border-radius: 5px;
+                height: fit-content;
+                .image-wrapper {
+                  /* padding: {
+                    left: 10%;
+                    right: 10%;
+                  } */
+                }
+              }
+
+              .content {
+                width: 45%;
+                white-space: pre-line;
+                flex-grow: 1;
+                border: none;
+              }
+            }
+          }
+        }
+
+        @media all and (max-width: 500px) {
+          .page-container {
+            .contents {
+              .main-content-wrapper {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+
+                .image,
+                .content {
+                  width: 100%;
+                }
+              }
             }
           }
         }

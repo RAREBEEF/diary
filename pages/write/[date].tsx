@@ -222,7 +222,7 @@ const Write = () => {
               value={weather}
               onChange={onWeatherChange}
               placeholder={`${todayOrTheDay}의 날씨`}
-              size={10}
+              size={15}
             />
             <datalist id="weather-list">
               <option value="맑음 ☀️">맑음 ☀️</option>
@@ -240,7 +240,7 @@ const Write = () => {
               value={mood}
               onChange={onMoodChange}
               placeholder={`${todayOrTheDay}의 기분`}
-              size={10}
+              size={15}
             />
             <datalist id="mood-list">
               <option value="보통 😐">보통 😐</option>
@@ -312,7 +312,7 @@ const Write = () => {
           nav {
             padding: {
               top: 50px;
-              bottom: 10px;
+              bottom: 30px;
             }
 
             hgroup {
@@ -357,7 +357,6 @@ const Write = () => {
                 input,
                 datalist {
                   flex-grow: 1;
-                  flex-basis: 10px;
                 }
               }
 

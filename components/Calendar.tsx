@@ -17,7 +17,6 @@ const Calendar = () => {
     calendarData: {
       curDate: { year, month },
     },
-    diariesData: { loading: diariesLoading },
     holiData: { loading: holiLoading },
   } = useSelector((state: reduxStateType): reduxStateType => state);
 
@@ -134,7 +133,6 @@ const Calendar = () => {
         </thead>
         <tbody>{calendar.map((el) => el)}</tbody>
       </table>
-      <Loading isShow={diariesLoading} />
       <HoliLoading isShow={holiLoading} />
     </main>
   );

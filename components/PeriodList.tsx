@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { getPeriodDiariesThunk } from "../redux/modules/setDiaries";
+import {
+  getPeriodDiariesThunk,
+  periodInitialization,
+} from "../redux/modules/setDiaries";
 import { reduxStateType } from "../redux/store";
 import Button from "./Button";
 
@@ -21,50 +24,51 @@ const PeriodList = () => {
 
   /**
    * 기간 내의 일기를 모두 로드한다
-   * @param from [시작연도, 시작월]
-   * @param to [종료연도, 종료월]
+   *
+   * @param from [시작연도, 시작월], to보다 미래
+   * @param to [종료연도, 종료월], from보다 과거
    * */
   const getDiary = (
-    from: [string, string] = ["2021", "01"],
-    to: [string, string] = ["2022", "12"]
+    from: [string, string] = ["2022", "09"],
+    to: [string, string] = ["2021", "05"]
   ) => {
-    const period = [];
-
     const fromYear = parseInt(from[0]);
     const fromMonth = parseInt(from[1]);
     const toYear = parseInt(to[0]);
     const toMonth = parseInt(to[1]);
-
-    for (let y = 0; y <= toYear - fromYear; y++) {
-      for (let m = 1; m <= 12; m++) {
+    //  0  <= 1
+    for (let y = 0; y <= fromYear - toYear; y++) {
+      for (let m = 12; m >= 1; m--) {
         // from 연도의 시작 월 찾기
-        if (y === 0 && m === 1 && fromMonth !== 1) {
+        if (y === 0 && m === 12 && fromMonth !== 12) {
           m = fromMonth;
         }
 
-        period.push([
-          (fromYear + y).toString(),
-          m < 10 ? "0" + m : m.toString(),
-        ]);
+        dispatch<any>(
+          getPeriodDiariesThunk(
+            uid,
+            (fromYear - y).toString(),
+            m < 10 ? "0" + m : m.toString()
+          )
+        );
 
         // to 연도의 종료 월 찾기
-        if (fromYear + y === toYear && m === toMonth) {
+        if (fromYear - y === toYear && m === toMonth) {
           break;
         }
       }
     }
-
-    dispatch<any>(getPeriodDiariesThunk(uid, period.reverse()));
   };
 
+  /**
+   * 로드 버튼 클릭
+   *
+   * period 데이터를 초기화 후 새로 불러온다.*/
   const onLoadClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    dispatch(periodInitialization());
     getDiary();
   };
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   return (
     <section className="container">
@@ -73,16 +77,14 @@ const PeriodList = () => {
           <h2>일기 불러오기</h2>
         </hgroup>
         <Button onClick={onLoadClick}>불러오기</Button>
-        {data.length !== 0 && (
-          <section>
-            {data.map((diary, i) => (
-              <h3 key={i}>{diary.title}</h3>
-            ))}
-          </section>
-        )}
+        <section>
+          {data.map((diary, i) => (
+            <h3 key={i}>{diary.title}</h3>
+          ))}
+        </section>
       </div>
       <style jsx>{`
-        @import "./styles/var.scss";
+        @import "../styles/var.scss";
 
         section {
           background-color: white;
