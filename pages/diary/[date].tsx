@@ -168,8 +168,10 @@ const Diary = () => {
             <a>{"< "}홈으로</a>
           </Link>
           <section className="tool-bar">
-            <Button onClick={() => {}} style={{ border: "none", padding: "0" }}>
-              수정
+            <Button style={{ border: "none", padding: "0" }}>
+              <Link href={`/write/${queryDate}`}>
+                <a>수정</a>
+              </Link>
             </Button>
             <Button
               onClick={onDeleteClick}
@@ -218,10 +220,12 @@ const Diary = () => {
             </section>
           )}
 
-          <section className="content">
-            <h4> {`${todayOrTheDay}의 하루`}</h4>
-            <p>{diary.content}</p>
-          </section>
+          {diary.content && (
+            <section className="content">
+              <h4> {`${todayOrTheDay}의 하루`}</h4>
+              <p>{diary.content}</p>
+            </section>
+          )}
         </div>
       </section>
 
@@ -335,17 +339,12 @@ const Diary = () => {
               }
 
               .image {
-                /* width: 100%; */
                 width: 50%;
-                /* margin: auto; */
-                border: 0.5px solid $gray-color;
-                border-radius: 5px;
+                border: none;
                 height: fit-content;
+                flex-grow: 1;
                 .image-wrapper {
-                  /* padding: {
-                    left: 10%;
-                    right: 10%;
-                  } */
+                  margin-top: 5px;
                 }
               }
 

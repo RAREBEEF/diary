@@ -3,7 +3,7 @@ interface Props {
   isShow: boolean;
 }
 
-const HoliLoading: React.FC<Props> = ({ isShow }) => {
+const LodaingModal: React.FC<Props> = ({ isShow }) => {
   return (
     <div className={isShow ? "show" : ""}>
       공휴일 정보를 불러오는 중
@@ -61,4 +61,4 @@ const HoliLoading: React.FC<Props> = ({ isShow }) => {
   );
 };
 
-export default HoliLoading;
+export default LodaingModal;

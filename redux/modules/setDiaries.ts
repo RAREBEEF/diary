@@ -27,8 +27,18 @@ export interface DiariesDataStateType {
    * 기간별 일기 목록 데이터
    * */
   periodData: Array<DiaryType>;
+  /**
+   * 기간별 일기 목록의 현재 페이지
+   * */
+  periodPage: number;
   loading: boolean;
   error: any;
+  /**
+   * 홈화면에서 가장 마지막에 사용한 탭(달력, 기간별 일기 목록).
+   *
+   * 다른 페이지에서 홈으로 돌아왔을 때 해당 탭을 바로 출력하기 위함.
+   * */
+  latestTab: number;
 }
 
 export const GET_DIARIES_START = "GET_DIARIES_START";
@@ -45,14 +55,16 @@ export const PERIOD_INITIALIZATION = "PERIOD_INITIALIZATION";
 export const GET_PERIOD_START = "GET_PERIOD_START";
 export const GET_PERIOD_SUCCESS = "GET_PERIOD_SUCCESS";
 export const GET_PERIOD_FAIL = "GET_PERIOD_FAIL";
+export const SET_PERIOD_PAGE = "SET_PERIOD_PAGE";
+export const SET_LATEST_TAB = "SET_LATEST_TAB";
 
-const getDiariesStart = () => {
+export const getDiariesStart = () => {
   return {
     type: GET_DIARIES_START,
   };
 };
 
-const getDiariesSuccess = (data: any, year: string, month: string) => {
+export const getDiariesSuccess = (data: any, year: string, month: string) => {
   return {
     type: GET_DIARIES_SUCCESS,
     data,
@@ -61,7 +73,7 @@ const getDiariesSuccess = (data: any, year: string, month: string) => {
   };
 };
 
-const getDiariesFail = (error: any, year: string, month: string) => {
+export const getDiariesFail = (error: any, year: string, month: string) => {
   return {
     type: GET_DIARIES_FAIL,
     error,
@@ -136,23 +148,36 @@ export const periodInitialization = () => {
   };
 };
 
-const getPeriodStart = () => {
+export const getPeriodStart = () => {
   return {
     type: GET_PERIOD_START,
   };
 };
 
-const getPeriodSuccess = (periodData: Array<DiaryType>) => {
+export const getPeriodSuccess = (periodData: Array<DiaryType>) => {
   return {
     type: GET_PERIOD_SUCCESS,
     periodData,
   };
 };
 
-const getPeriodFail = (error: any) => {
+export const getPeriodFail = (error: any) => {
   return {
     type: GET_PERIOD_FAIL,
     error,
+  };
+};
+
+export const setPeriodPage = (periodPage: number) => {
+  return {
+    type: SET_PERIOD_PAGE,
+    periodPage,
+  };
+};
+export const setLatestTab = (latestTab: number) => {
+  return {
+    type: SET_LATEST_TAB,
+    latestTab,
   };
 };
 
@@ -281,9 +306,6 @@ export const getPeriodDiariesThunk = (
 
       dispatch(getPeriodSuccess(periodData));
     } catch (error) {
-      window.alert(
-        `일기 데이터를 불러오는데 실패하였습니다.\n통신 상태를 확인해 주세요.`
-      );
       dispatch(getPeriodFail(error));
     }
   };
@@ -369,11 +391,19 @@ const reducer = (prev = initialState, action: any) => {
 
     case DELETE_DIARY_SUCCESS: {
       const data: any = { ...prev.data };
-
       delete data[action.year][action.month][action.date];
-
+      const periodData: Array<DiaryType> = [...prev.periodData];
+      periodData.splice(
+        periodData.findIndex(
+          (diary) =>
+            diary.date === `${action.year}${action.month}${action.date}`
+        ),
+        1
+      );
       return {
         ...prev,
+        data,
+        periodData,
         loading: false,
         error: null,
       };
@@ -428,6 +458,19 @@ const reducer = (prev = initialState, action: any) => {
       };
     }
 
+    case SET_PERIOD_PAGE: {
+      return {
+        ...prev,
+        periodPage: action.periodPage,
+      };
+    }
+    case SET_LATEST_TAB: {
+      return {
+        ...prev,
+        latestTab: action.latestTab,
+      };
+    }
+
     default:
       return prev;
   }
@@ -438,6 +481,8 @@ const initialState = {
   periodData: [],
   loading: false,
   error: null,
+  latestTab: 0,
+  periodPage: 0,
 };
 
 export default reducer;

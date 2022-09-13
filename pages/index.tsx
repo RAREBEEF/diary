@@ -6,11 +6,19 @@ import { useSelector } from "react-redux";
 import { reduxStateType } from "../redux/store";
 import { DiariesDataStateType } from "../redux/modules/setDiaries";
 import { NextPage } from "next";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
-  const { loading } = useSelector(
+  const { loading, latestTab } = useSelector(
     (state: reduxStateType): DiariesDataStateType => state.diariesData
   );
+
+  // 마지막 탭이 기간별 일기 모아보기 탭일 경우 페이지 로드 시 해당 탭으로 스크롤 이동
+  useEffect(() => {
+    if (window.scrollY === 0 && latestTab === 1) {
+      window.scrollTo({ top: window.innerHeight + 50 });
+    }
+  }, [latestTab]);
 
   return (
     <section className="page-container">

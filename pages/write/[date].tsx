@@ -9,6 +9,9 @@ import { getDiariesThunk, setDiaryThunk } from "../../redux/modules/setDiaries";
 import { getHoliThunk } from "../../redux/modules/setHoli";
 import Loading from "../../components/Loading";
 import Link from "next/link";
+import { DiaryType } from "../../type";
+import { storage } from "../../fb";
+import { deleteObject, ref } from "firebase/storage";
 
 const Write = () => {
   const dispatch = useDispatch();
@@ -21,15 +24,34 @@ const Write = () => {
     },
     diariesData: { data: diaries, loading },
   } = useSelector((state: reduxStateType): reduxStateType => state);
-  const { value: title, onChange: onTitleChange } = useInput("");
-  const { value: weather, onChange: onWeatherChange } = useInput("");
-  const { value: mood, onChange: onMoodChange } = useInput("");
-  const { value: content, onChange: onContentChange } = useInput("");
+  const {
+    value: title,
+    setValue: setTitle,
+    onChange: onTitleChange,
+  } = useInput("");
+  const {
+    value: weather,
+    setValue: setWeather,
+    onChange: onWeatherChange,
+  } = useInput("");
+  const {
+    value: mood,
+    setValue: setMood,
+    onChange: onMoodChange,
+  } = useInput("");
+  const {
+    value: content,
+    setValue: setContent,
+    onChange: onContentChange,
+  } = useInput("");
   const [attachment, setAttachment] = useState<File | null>(null);
   const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
   const [redirectToDiary, setRedirectToDiary] = useState<boolean>(false);
   const [redirectToLogin, setRedirectToLogin] = useState<boolean>(false);
   const [init, setInit] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [fileEdited, setFileEdited] = useState<boolean>(false);
+  const [prevDiary, setPrevDiary] = useState<DiaryType | null>(null);
   const [{ year, month, date }, setDate] = useState<{
     year: string;
     month: string;
@@ -82,7 +104,7 @@ const Write = () => {
     }
 
     // 해당하는 일기가 없을 경우 계속 작성
-    // 이미 일기가 있을 경우 일기로 이동
+    // 이미 일기가 있을 경우 수정모드 진입
     if (
       !diaries[year] ||
       !diaries[year][month] ||
@@ -91,7 +113,15 @@ const Write = () => {
       setInit(true);
       return;
     } else {
-      setRedirectToDiary(true);
+      const prev: DiaryType = diaries[year][month][date];
+      setPrevDiary(prev);
+      setEditMode(true);
+      setTitle(prev.title);
+      setMood(prev.mood);
+      setWeather(prev.weather);
+      setContent(prev.content);
+      setInit(true);
+      return;
     }
   }, [
     date,
@@ -102,19 +132,31 @@ const Write = () => {
     queryDate,
     redirectToHome,
     router,
+    setContent,
+    setMood,
+    setTitle,
+    setWeather,
     uid,
     year,
   ]);
 
   // 일기 업로드
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (loading) {
       return;
     }
 
-    const diaryData = {
+    if (title.length === 0) {
+      window.alert("제목을 입력해 주세요.");
+      return;
+    } else if (!attachment && !content) {
+      window.alert("본문과 사진 중 최소 하나 이상의 내용이 필요합니다.");
+      return;
+    }
+
+    let diaryData = {
       attachmentUrl: "",
       attachmentId: "",
       date:
@@ -124,6 +166,18 @@ const Write = () => {
       mood,
       content,
     };
+
+    // 수정모드일 경우 기존 첨부사진 데이터 이어받음
+    if (editMode && prevDiary) {
+      diaryData.attachmentId = prevDiary.attachmentId;
+      diaryData.attachmentUrl = prevDiary.attachmentUrl;
+
+      // 첨부사진이 수정 되었을 경우 기존의 사진을 스토리지에서 삭제
+      if (fileEdited) {
+        const storageRef = ref(storage, `${uid}/${diaryData.attachmentId}`);
+        await deleteObject(storageRef);
+      }
+    }
 
     dispatch<any>(
       setDiaryThunk(
@@ -170,6 +224,10 @@ const Write = () => {
   const onAttachmentDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
+    if (editMode) {
+      setFileEdited(true);
+    }
+
     setAttachment(null);
   };
 
@@ -190,8 +248,11 @@ const Write = () => {
       <Loading isShow={loading} text="업로드 중" />
 
       <nav>
-        <Link href="/">
-          <a>{"< "}홈으로</a>
+        <Link href={editMode ? `/diary/${queryDate}` : "/"}>
+          <a>
+            {"< "}
+            {editMode ? "돌아가기" : "홈으로"}
+          </a>
         </Link>
         <hgroup>
           <h3>{`${year} / ${month} / ${date}`}</h3>
@@ -208,6 +269,7 @@ const Write = () => {
             value={title}
             onChange={onTitleChange}
             placeholder={`${todayOrTheDay}의 제목`}
+            maxLength={60}
           />
           <datalist id="title-list">
             <option
@@ -223,6 +285,7 @@ const Write = () => {
               onChange={onWeatherChange}
               placeholder={`${todayOrTheDay}의 날씨`}
               size={15}
+              maxLength={15}
             />
             <datalist id="weather-list">
               <option value="맑음 ☀️">맑음 ☀️</option>
@@ -241,6 +304,7 @@ const Write = () => {
               onChange={onMoodChange}
               placeholder={`${todayOrTheDay}의 기분`}
               size={15}
+              maxLength={15}
             />
             <datalist id="mood-list">
               <option value="보통 😐">보통 😐</option>
@@ -258,8 +322,9 @@ const Write = () => {
             value={content}
             onChange={onContentChange}
             placeholder={`${todayOrTheDay}의 하루`}
+            maxLength={5000}
           />
-          <div>
+          <div className="attachment-wrapper">
             <input
               id="attachment-input"
               type="file"
@@ -267,13 +332,25 @@ const Write = () => {
               ref={attachmentInputRef}
               onChange={onAttachmentChange}
             />
-            {attachment ? (
-              <Button
-                style={{ marginTop: "10px", padding: "5px 15px" }}
-                onClick={onAttachmentDelete}
-              >
-                사진 삭제하기
-              </Button>
+            {attachment ||
+            (!attachment &&
+              editMode &&
+              prevDiary &&
+              prevDiary.attachmentUrl &&
+              !fileEdited) ? (
+              <div>
+                <Button
+                  style={{ marginTop: "10px", padding: "5px 15px" }}
+                  onClick={onAttachmentDelete}
+                >
+                  사진 삭제하기
+                </Button>
+                <span className="attachment-title">
+                  {attachment
+                    ? attachment?.name
+                    : prevDiary && prevDiary.attachmentId}
+                </span>
+              </div>
             ) : (
               <label
                 id="attachmentLabel"
@@ -285,10 +362,16 @@ const Write = () => {
             )}
           </div>
         </div>
-
-        <Button
-          style={{ width: "140px", alignSelf: "flex-end" }}
-        >{`${todayOrTheDay}의 일기, 끝`}</Button>
+        <section className="btn-wrapper">
+          <Button
+            style={{ width: "140px" }}
+          >{`${todayOrTheDay}의 일기, 끝`}</Button>
+          <Button>
+            <Link href={editMode ? `/diary/${queryDate}` : "/"}>
+              <a>{editMode ? "돌아가기" : "작성 취소"}</a>
+            </Link>
+          </Button>
+        </section>
       </form>
 
       <style jsx>{`
@@ -384,12 +467,14 @@ const Write = () => {
                   flex-grow: 1;
                   margin-top: 20px;
                 }
+              }
 
-                &#attachment-input {
+              .attachment-wrapper {
+                #attachment-input {
                   display: none;
                 }
 
-                &.attachment-label {
+                .attachment-label {
                   width: fit-content;
                   padding: 5px 15px;
                   margin-top: 10px;
@@ -404,7 +489,26 @@ const Write = () => {
                     filter: brightness(1.5);
                   }
                 }
+
+                div {
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  row-gap: 0;
+                  flex-wrap: wrap;
+
+                  .attachment-title {
+                    margin-top: 10px;
+                    color: $gray-color;
+                  }
+                }
               }
+            }
+
+            .btn-wrapper {
+              display: flex;
+              gap: 10px;
+              align-self: flex-end;
             }
           }
         }

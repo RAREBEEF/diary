@@ -1,7 +1,7 @@
 import "@nextcss/reset";
 import "../styles/globals.scss";
 import type { AppProps } from "next/app";
-import Layout from "../components/Layout";
+import Layout from "../components/LayoutAndInit";
 import { Provider } from "react-redux";
 import store from "../redux/store";
 

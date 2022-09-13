@@ -1,15 +1,15 @@
 import classNames from "classnames";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import useCalendar from "../hooks/useCalendar";
 import { setCalendar } from "../redux/modules/setCalendar";
+import { setLatestTab } from "../redux/modules/setDiaries";
 import { reduxStateType } from "../redux/store";
 import Button from "./Button";
 import styles from "./Calendar.module.scss";
-import HoliLoading from "./HoliLoading";
-import Loading from "./Loading";
+import LodaingModal from "./LoadingModal";
 
 const Calendar = () => {
   const dispatch = useDispatch();
@@ -80,8 +80,17 @@ const Calendar = () => {
     dispatch(setCalendar.actions.setCurDate({ year, month: parseInt(value) }));
   };
 
+  /**
+   * 컴포넌트 내 아무 곳이나 클릭 시 현재 컴포넌트를 최근 탭으로 저장*/
+  const onContainerClick = () => {
+    dispatch(setLatestTab(0));
+  };
+
   return (
-    <main className={classNames(styles.container, "container")}>
+    <main
+      className={classNames(styles.container, "container")}
+      onClick={onContainerClick}
+    >
       <nav className={styles.nav}>
         <Button onClick={onPrevMonthClick} style={{ border: "none" }}>
           <Image
@@ -133,7 +142,7 @@ const Calendar = () => {
         </thead>
         <tbody>{calendar.map((el) => el)}</tbody>
       </table>
-      <HoliLoading isShow={holiLoading} />
+      <LodaingModal isShow={holiLoading} />
     </main>
   );
 };

@@ -16,7 +16,7 @@ import { getHoliThunk } from "../redux/modules/setHoli";
  */
 const useCalendar = (year: number, month: number) => {
   const {
-    calendarData: { init },
+    calendarData: { init, today },
     loginData: {
       userData: { uid },
     },
@@ -27,7 +27,6 @@ const useCalendar = (year: number, month: number) => {
   const router = useRouter();
   const curMonthLastDate = new Date(year, month, 0).getDate();
   const prevMonthLastDay = new Date(year, month - 1, 0).getDay();
-  const today = new Date();
   /**
    * 날짜 클릭 이벤트 리스너,
    * 해당 날짜에 일기가 있을 경우 diary로, 없을 경우 wirte로 이동
@@ -129,9 +128,9 @@ const useCalendar = (year: number, month: number) => {
     }
     // 오늘 날짜
     if (
-      year == today.getFullYear() &&
-      month === today.getMonth() + 1 &&
-      i === today.getDate()
+      year === parseInt(today.year) &&
+      month === parseInt(today.month) &&
+      i === parseInt(today.date)
     ) {
       isToday = true;
     }

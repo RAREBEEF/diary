@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { auth } from "../fb";
 import { setCalendar } from "../redux/modules/setCalendar";
-import { login, loginDataStateType } from "../redux/modules/setLogin";
+import { login } from "../redux/modules/setLogin";
 import { reduxStateType } from "../redux/store";
 import Loading from "./Loading";
 import Nav from "./Nav";
@@ -24,6 +24,17 @@ const Layout: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     if (!calendarInit) {
       const now = new Date();
+
+      dispatch(
+        setCalendar.actions.setToday({
+          year: now.getFullYear().toString(),
+          month:
+            now.getMonth() < 9
+              ? "0" + (now.getMonth() + 1)
+              : (now.getMonth() + 1).toString(),
+          date: now.getDate().toString(),
+        })
+      );
 
       dispatch(
         setCalendar.actions.setCurDate({

@@ -1,29 +1,27 @@
 import Image from "next/image";
 import Link from "next/link";
-// import { useRouter } from "next/router";
-// import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { loginDataStateType } from "../redux/modules/setLogin";
+import { setLatestTab } from "../redux/modules/setDiaries";
 import { reduxStateType } from "../redux/store";
 
 const Nav = () => {
-  // const router = useRouter();
-  const { isLoggedIn } = useSelector(
-    (state: reduxStateType): loginDataStateType => state.loginData
-  );
-  const today = new Date();
+  const dispatch = useDispatch();
+  const {
+    loginData: { isLoggedIn },
+    calendarData: {
+      today: { year, month, date },
+    },
+  } = useSelector((state: reduxStateType): reduxStateType => state);
 
-  // useEffect(() => {
-  //   const path = router.pathname;
-  //   console.log(path);
-  //   console.log(/^\/profile|^\/write|\/diary/gi.test(path));
-  //   if (isLoggedIn) {
-  //     return;
-  //   }
-  // }, [isLoggedIn, router.pathname]);
+  /**
+   * 컴포넌트 내 아무 곳이나 클릭 시 현재 컴포넌트를 최근 탭으로 저장*/
+  const onContainerClick = () => {
+    dispatch(setLatestTab(0));
+  };
 
   return (
-    <nav>
+    <nav onClick={onContainerClick}>
       <Link href="/">
         <a>
           <Image src="/home-solid.svg" width={20} height={20} alt="Nav" />
@@ -32,11 +30,7 @@ const Nav = () => {
       </Link>
       <Link
         href={{
-          pathname: `/write/${today.getFullYear()}${
-            today.getMonth() < 9
-              ? "0" + (today.getMonth() + 1)
-              : today.getMonth() + 1
-          }${today.getDate() < 10 ? "0" + today.getDate() : today.getDate()}`,
+          pathname: `/write/${year}${month}${date}`,
         }}
       >
         <a>
