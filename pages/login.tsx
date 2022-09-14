@@ -12,14 +12,16 @@ const Login = () => {
   );
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (router.query.reauth === "true") {
+      return;
+    } else if (isLoggedIn) {
       router.push("/");
     }
   }, [isLoggedIn, router]);
 
   return (
     <section className="page-container">
-      <LoginForm />
+      <LoginForm reauth={router.query.reauth === "true"} />
       <style jsx>{`
         .page-container {
           display: flex;

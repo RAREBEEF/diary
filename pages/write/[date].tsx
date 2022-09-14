@@ -12,6 +12,7 @@ import Link from "next/link";
 import { DiaryType } from "../../type";
 import { storage } from "../../fb";
 import { deleteObject, ref } from "firebase/storage";
+import classNames from "classnames";
 
 const Write = () => {
   const dispatch = useDispatch();
@@ -355,7 +356,11 @@ const Write = () => {
               <label
                 id="attachmentLabel"
                 htmlFor="attachment-input"
-                className="attachment-label"
+                className={classNames(
+                  "attachment-label",
+                  "hover-brighter",
+                  "hover-bigger"
+                )}
               >
                 사진 첨부하기
               </label>

@@ -4,13 +4,13 @@ import { User, UserCredential } from "firebase/auth";
 export interface loginDataStateType {
   init: boolean;
   isLoggedIn: boolean;
-  userData: { user: User | null; uid: string; displayName: string };
+  userData: { uid: string; displayName: string };
 }
 
 export const initialState: loginDataStateType = {
   init: false,
   isLoggedIn: false,
-  userData: { user: null, uid: "", displayName: "" },
+  userData: { uid: "", displayName: "" },
 };
 
 export const login = createSlice({

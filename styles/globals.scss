@@ -17,6 +17,20 @@ body {
   user-select: none;
 }
 
+.hover-brighter {
+  transition: filter 0.3s;
+  &:hover {
+    filter: brightness(1.5);
+  }
+}
+
+.hover-bigger {
+  transition: transform 0.3s;
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

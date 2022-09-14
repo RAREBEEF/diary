@@ -10,10 +10,14 @@ import useInput from "../hooks/useInput";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/modules/setLogin";
 import { auth } from "../fb";
+import { useRouter } from "next/router";
 
 type formActionType = "login" | "signup" | "pwReset";
-
-const LoginForm = () => {
+interface Props {
+  reauth: boolean;
+}
+const LoginForm: React.FC<Props> = ({ reauth }) => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const { value: email, onChange: onEmailChange } = useInput("");
   const { value: displayName, onChange: onDisplayNameChange } = useInput("");
@@ -83,7 +87,6 @@ const LoginForm = () => {
                 init: true,
                 isLoggedIn: true,
                 userData: {
-                  user,
                   uid: user.uid,
                   displayName: user.displayName,
                 },
@@ -107,6 +110,9 @@ const LoginForm = () => {
               userData: { uid: user.uid, displayName: user.displayName },
             })
           );
+          if (reauth) {
+            router.push("/profile");
+          }
         })
         .catch((error) => {
           setAlert(error.code);

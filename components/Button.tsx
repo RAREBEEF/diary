@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { CSSProperties } from "react";
 
 interface Props {
@@ -9,7 +10,12 @@ interface Props {
 
 const Button: React.FC<Props> = ({ onClick, style, children, type }) => {
   return (
-    <button onClick={onClick} style={style} type={type}>
+    <button
+      onClick={onClick}
+      style={style}
+      type={type}
+      className={classNames("hover-brighter", "hover-bigger")}
+    >
       {children}
 
       <style jsx>{`
@@ -17,16 +23,12 @@ const Button: React.FC<Props> = ({ onClick, style, children, type }) => {
 
         button {
           cursor: pointer;
-          transition: filter 0.3s;
           border: 1.5px solid $gray-color;
           border-radius: 5px;
           padding: 5px;
           filter: none;
           font: {
             size: 14px;
-          }
-          &:hover {
-            filter: brightness(1.5);
           }
         }
       `}</style>

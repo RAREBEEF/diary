@@ -142,7 +142,8 @@ const useCalendar = (year: number, month: number) => {
           styles.item,
           isHoli && styles.holi,
           isWrited && styles.writed,
-          isToday && styles.today
+          isToday && styles.today,
+          "hover-bigger"
         )}
         onClick={() => {
           onDateClick(i, isWrited);

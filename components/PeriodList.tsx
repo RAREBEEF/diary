@@ -91,8 +91,8 @@ const PeriodList = () => {
     const originalArr = [...data];
 
     originalArr.forEach((diary, i) => {
-      pagesArr.push([...originalArr.slice(i, i + 20)]);
-      originalArr.splice(0, 19);
+      pagesArr.push([...originalArr.slice(i, i + 10)]);
+      originalArr.splice(0, 9);
     });
 
     setPages(pagesArr);
@@ -131,8 +131,8 @@ const PeriodList = () => {
           <h2>일기 모아보기</h2>
         </hgroup>
         <nav className="nav--period">
-          <div className="input-wrapper">
-            <div>
+          <div className="inputs-wrapper">
+            <div className={classNames("input-wrapper", "hover-brighter")}>
               <label htmlFor="from-input">From</label>
               <input
                 type="month"
@@ -142,8 +142,16 @@ const PeriodList = () => {
                 max={`${today.year}-${today.month}`}
                 min={toDate}
               />
+              <div className="icon--calendar">
+                <Image
+                  src="/calendar-solid.svg"
+                  width={20}
+                  height={20}
+                  alt={"From date"}
+                />
+              </div>
             </div>
-            <div>
+            <div className={classNames("input-wrapper", "hover-brighter")}>
               <label htmlFor="to-input">to</label>
               <input
                 type="month"
@@ -153,8 +161,17 @@ const PeriodList = () => {
                 max={fromDate}
                 min={"1960-01"}
               />
+              <div className="icon--calendar">
+                <Image
+                  src="/calendar-solid.svg"
+                  width={20}
+                  height={20}
+                  alt={"From date"}
+                />
+              </div>
             </div>
           </div>
+
           <Button
             onClick={onLoadClick}
             style={{ borderWidth: "0.5px", borderRadius: "10px" }}
@@ -169,7 +186,7 @@ const PeriodList = () => {
               <p>로드 실패</p>
             ) : (
               pages[periodPage]?.map((diary, i) => (
-                <li key={i}>
+                <li key={i} className="hover-bigger">
                   <Link href={`/diary/${diary.date}`}>
                     <a className="link">
                       <h3 className="diary-title">{diary.title}</h3>
@@ -271,6 +288,7 @@ const PeriodList = () => {
         .container {
           background-color: white;
           box-shadow: 0px -1px 5px #333333;
+          height: auto !important;
 
           .inner-wrapper {
             max-width: 1000px;
@@ -278,6 +296,7 @@ const PeriodList = () => {
             padding: {
               left: 50px;
               right: 50px;
+              bottom: 250px;
             }
 
             hgroup {
@@ -300,20 +319,58 @@ const PeriodList = () => {
             }
 
             .nav--period {
-              margin: 30px auto;
+              margin: 50px auto 30px;
               display: flex;
               flex-direction: column;
               justify-content: center;
               align-items: center;
               gap: 20px;
 
-              .input-wrapper {
+              .inputs-wrapper {
                 color: rgb(100, 100, 100, 0.8);
                 display: flex;
                 justify-content: center;
                 gap: 20px;
                 row-gap: 10px;
                 flex-wrap: wrap;
+
+                .input-wrapper {
+                  position: relative;
+                  height: fit-content;
+
+                  input {
+                    min-width: fit-content;
+                    border: 0.5px solid $gray-color;
+                    border-radius: 15px;
+                    padding: 5px 10px;
+                    cursor: pointer;
+                    &::-webkit-calendar-picker-indicator {
+                      opacity: 0;
+                      cursor: pointer;
+                    }
+                    &::-webkit-clear-button,
+                    &::-webkit-inner-spin-button {
+                      opacity: 0;
+                      cursor: pointer;
+                    }
+                  }
+
+                  label {
+                    position: absolute;
+                    top: -22.5px;
+                    left: 5px;
+                  }
+
+                  .icon--calendar {
+                    pointer-events: none;
+                    height: fit-content;
+                    position: absolute;
+                    top: 3px;
+                    bottom: 0;
+                    right: 7.5px;
+                    margin: auto;
+                  }
+                }
               }
 
               * {
@@ -321,13 +378,6 @@ const PeriodList = () => {
                   size: 16px;
                   weight: 500;
                 }
-              }
-
-              input {
-                min-width: fit-content;
-                border: 0.5px solid $gray-color;
-                border-radius: 15px;
-                padding: 5px 10px;
               }
             }
 

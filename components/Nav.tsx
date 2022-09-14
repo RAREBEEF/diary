@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { setLatestTab } from "../redux/modules/setDiaries";
+// import { setLatestTab } from "../redux/modules/setDiaries";
 import { reduxStateType } from "../redux/store";
 
 const Nav = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const {
     loginData: { isLoggedIn },
     calendarData: {
@@ -14,16 +14,16 @@ const Nav = () => {
     },
   } = useSelector((state: reduxStateType): reduxStateType => state);
 
-  /**
-   * 컴포넌트 내 아무 곳이나 클릭 시 현재 컴포넌트를 최근 탭으로 저장*/
-  const onContainerClick = () => {
-    dispatch(setLatestTab(0));
-  };
+  // /**
+  //  * 컴포넌트 내 아무 곳이나 클릭 시 홈화면 달력 탭을 최근 탭으로 저장*/
+  // const onContainerClick = () => {
+  //   dispatch(setLatestTab(0));
+  // };
 
   return (
-    <nav onClick={onContainerClick}>
+    <nav /* onClick={onContainerClick} */>
       <Link href="/">
-        <a>
+        <a className="hover-brighter">
           <Image src="/home-solid.svg" width={20} height={20} alt="Nav" />
           <h4>Home</h4>
         </a>
@@ -33,19 +33,19 @@ const Nav = () => {
           pathname: `/write/${year}${month}${date}`,
         }}
       >
-        <a>
-          <Image src="/add-solid.svg" width={20} height={20} alt="Nav" />
+        <a className="hover-brighter">
+          <Image src="/write-solid.svg" width={20} height={20} alt="Nav" />
           <h4>Today</h4>
         </a>
       </Link>
       <Link href={isLoggedIn ? "/profile" : "/login"}>
         {isLoggedIn ? (
-          <a>
+          <a className="hover-brighter">
             <Image src="/profile-solid.svg" width={20} height={20} alt="Nav" />
             <h4>Profile</h4>
           </a>
         ) : (
-          <a>
+          <a className="hover-brighter">
             <Image src="/login-solid.svg" width={20} height={20} alt="Nav" />
             <h4>Login</h4>
           </a>
@@ -68,7 +68,6 @@ const Nav = () => {
           box-shadow: 0px -1px 5px $gray-color;
 
           a {
-            transition: filter 0.3s;
             width: 0;
             flex-grow: 1;
             text-align: center;
@@ -91,10 +90,6 @@ const Nav = () => {
                 size: 13px;
                 weight: 500;
               }
-            }
-
-            &:hover {
-              filter: brightness(1.5);
             }
           }
         }

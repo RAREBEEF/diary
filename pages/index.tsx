@@ -32,6 +32,7 @@ const Home: NextPage = () => {
         .page-container {
           .container {
             height: 100vh;
+            min-height: 100vh;
             position: sticky;
             top: 0;
           }
