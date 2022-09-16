@@ -97,6 +97,12 @@ const Document = () => {
           content="/logos/mstile-310x310.png"
         />
         <meta name="theme-color" content="#ffffff" />
+        <meta
+          httpEquiv="Cache-Control"
+          content="no-cache, no-store, must-revalidate"
+        />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <base href="/" />
       </Head>
       <body>
         <Main />
