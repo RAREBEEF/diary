@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import Footer from "../components/Footer";
 import LoginForm from "../components/LoginForm";
 import Seo from "../components/Seo";
 import { loginDataStateType } from "../redux/modules/setLogin";
@@ -27,20 +28,22 @@ const Login = () => {
       <div className="img-wrapper">
         <Image
           src="/logos/logo.svg"
-          width="200"
-          height="30"
+          width="80"
+          height="20"
           layout="responsive"
           objectFit="contain"
           alt="Dailiary"
         />
       </div>
       <LoginForm reauth={router.query.reauth === "true"} />
+      <Footer />
       <style jsx>{`
         .page-container {
           padding: {
-            top: 60px;
-            bottom: 60px;
+            top: 30px;
+            bottom: 80px;
           }
+          display: flex;
           .img-wrapper {
             text-align: center;
           }

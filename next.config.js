@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-// import withPlugins from "next-compose-plugins";
 
 const withPWA = require("next-pwa")({
   dest: "public",

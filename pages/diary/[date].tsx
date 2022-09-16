@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -212,13 +213,13 @@ const Diary = () => {
             <section className="image">
               <h4> {`${todayOrTheDay}의 사진`}</h4>
               <div className="image-wrapper">
-                <Image
+                <img
                   src={diary.attachmentUrl}
                   alt={"attachment"}
-                  width={100}
-                  height={80}
-                  layout="responsive"
-                  objectFit="contain"
+                  // width={100}
+                  // height={80}
+                  // layout="responsive"
+                  // objectFit="contain"
                 />
               </div>
             </section>

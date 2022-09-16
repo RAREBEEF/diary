@@ -151,14 +151,14 @@ const PeriodList = () => {
                 max={`${today.year}-${today.month}`}
                 min={toDate}
               />
-              <div className="icon--calendar">
+              {/* <div className="icon--calendar">
                 <Image
                   src="/icons/calendar-solid.svg"
                   width={20}
                   height={20}
                   alt={"From date"}
                 />
-              </div>
+              </div> */}
             </div>
             <div className={classNames("input-wrapper", "hover-brighter")}>
               <label htmlFor="to-input">to</label>
@@ -170,21 +170,18 @@ const PeriodList = () => {
                 max={fromDate}
                 min={"1960-01"}
               />
-              <div className="icon--calendar">
+              {/* <div className="icon--calendar">
                 <Image
                   src="/icons/calendar-solid.svg"
                   width={20}
                   height={20}
                   alt={"From date"}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
 
-          <Button
-            onClick={onLoadClick}
-            style={{ borderWidth: "0.5px", borderRadius: "10px" }}
-          >
+          <Button onClick={onLoadClick} style={{ borderRadius: "10px" }}>
             불러오기
           </Button>
         </nav>
@@ -351,19 +348,23 @@ const PeriodList = () => {
 
                   input {
                     min-width: fit-content;
-                    border: 0.5px solid $gray-color;
+                    border: 1px solid $gray-color;
                     border-radius: 15px;
                     padding: 5px 10px;
+                    height: 35px;
+                    width: 125px;
                     cursor: pointer;
-                    &::-webkit-calendar-picker-indicator {
+                    /* &::-webkit-calendar-picker-indicator {
                       opacity: 0;
+                      display: none;
                       cursor: pointer;
                     }
                     &::-webkit-clear-button,
                     &::-webkit-inner-spin-button {
+                      display: none;
                       opacity: 0;
                       cursor: pointer;
-                    }
+                    } */
                   }
 
                   label {

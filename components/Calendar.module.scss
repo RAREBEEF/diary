@@ -1,11 +1,17 @@
 @import "../styles/var.scss";
 
 .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   .nav {
+    position: absolute;
+    top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 20vh;
+    height: 15vh;
     * {
       margin: 10px;
     }
@@ -24,7 +30,7 @@
       cursor: pointer;
       font: {
         size: 20px;
-        weight: 500;
+        weight: 700;
       }
     }
   }
@@ -34,16 +40,16 @@
     margin: auto;
     border-collapse: separate;
     border-spacing: 2vmin;
-    position: absolute;
-    top: 5vh;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    // top: 0;
+    // bottom: 0;
+    // left: 0;
+    // right: 0;
+
     & > thead {
       & > tr > th {
         color: $gray-color;
         font: {
-          size: 2.5vmin;
+          size: 3vmin;
           weight: 500;
           family: "Roboto Mono", monospace;
         }
@@ -60,13 +66,13 @@
       color: $gray-color;
       border-radius: 35%;
       background-color: $theme-color;
-      width: 8vmin;
+      width: 9vmin;
       min-width: 20px;
       min-height: 20px;
-      height: 8vmin;
+      height: 9vmin;
       cursor: pointer;
       font: {
-        size: 3vmin;
+        size: 4vmin;
         weight: 500;
       }
       &:last-child {
