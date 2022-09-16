@@ -69,12 +69,13 @@ const Layout: React.FC<Props> = ({ children }) => {
     });
   }, [dispatch]);
 
-  return (
+  return loginInit && calendarInit ? (
     <>
       {children}
       <Nav />
-      <Loading isShow={!loginInit || !calendarInit} />
     </>
+  ) : (
+    <Loading />
   );
 };
 
