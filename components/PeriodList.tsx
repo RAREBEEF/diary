@@ -342,7 +342,7 @@ const PeriodList = () => {
                 display: flex;
                 justify-content: center;
                 gap: 20px;
-                row-gap: 10px;
+                row-gap: 30px;
                 flex-wrap: wrap;
 
                 .input-wrapper {
