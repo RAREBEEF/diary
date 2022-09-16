@@ -229,7 +229,7 @@ const PeriodList = () => {
                 onClick={onPrevPageClick}
               >
                 <Image
-                  src="/angle-left-solid.svg"
+                  src="/icons/angle-left-solid.svg"
                   width={20}
                   height={20}
                   alt="Previous month"
@@ -282,7 +282,7 @@ const PeriodList = () => {
                 onClick={onNextPageClick}
               >
                 <Image
-                  src="/angle-left-solid.svg"
+                  src="/icons/angle-left-solid.svg"
                   width={20}
                   height={20}
                   alt="Next month"

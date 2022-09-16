@@ -315,14 +315,17 @@ const LoginForm: React.FC<Props> = ({ reauth }) => {
             flex-direction: column;
             gap: 15px;
             margin-bottom: 5vh;
+            align-items: center;
 
             .input-wrapper {
               width: 30vw;
+              max-width: 300px;
               min-width: 250px;
               display: flex;
               flex-direction: column;
               gap: 5px;
               margin-bottom: 10px;
+
               input {
                 border: 1.5px solid $gray-color;
                 border-radius: 5px;
