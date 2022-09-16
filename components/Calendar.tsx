@@ -94,7 +94,7 @@ const Calendar = () => {
       <nav className={styles.nav}>
         <Button onClick={onPrevMonthClick} style={{ border: "none" }}>
           <Image
-            src="/angle-left-solid.svg"
+            src="/icons/angle-left-solid.svg"
             width={25}
             height={25}
             alt="Previous month"
@@ -121,7 +121,7 @@ const Calendar = () => {
         </div>
         <Button onClick={onNextMonthClick} style={{ border: "none" }}>
           <Image
-            src="/angle-left-solid.svg"
+            src="/icons/angle-left-solid.svg"
             width={25}
             height={25}
             alt="Next month"

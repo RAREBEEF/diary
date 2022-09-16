@@ -13,6 +13,7 @@ import { DiaryType } from "../../type";
 import { storage } from "../../fb";
 import { deleteObject, ref } from "firebase/storage";
 import classNames from "classnames";
+import Seo from "../../components/Seo";
 
 const Write = () => {
   const dispatch = useDispatch();
@@ -246,6 +247,9 @@ const Write = () => {
 
   return init ? (
     <section className="page-container">
+      <Seo
+        title={`Dailiary | ${todayOrTheDay === "오늘" ? "Today" : queryDate}`}
+      />
       <Loading isShow={loading} text="업로드 중" />
 
       <nav>
@@ -520,7 +524,9 @@ const Write = () => {
       `}</style>
     </section>
   ) : (
-    <></>
+    <>
+      <Seo />
+    </>
   );
 };
 

@@ -24,7 +24,7 @@ const Nav = () => {
     <nav /* onClick={onContainerClick} */>
       <Link href="/">
         <a className="hover-brighter">
-          <Image src="/home-solid.svg" width={20} height={20} alt="Nav" />
+          <Image src="/icons/home-solid.svg" width={20} height={20} alt="Nav" />
           <h4>Home</h4>
         </a>
       </Link>
@@ -34,19 +34,19 @@ const Nav = () => {
         }}
       >
         <a className="hover-brighter">
-          <Image src="/write-solid.svg" width={20} height={20} alt="Nav" />
+          <Image src="/icons/write-solid.svg" width={20} height={20} alt="Nav" />
           <h4>Today</h4>
         </a>
       </Link>
       <Link href={isLoggedIn ? "/profile" : "/login"}>
         {isLoggedIn ? (
           <a className="hover-brighter">
-            <Image src="/profile-solid.svg" width={20} height={20} alt="Nav" />
+            <Image src="/icons/profile-solid.svg" width={20} height={20} alt="Nav" />
             <h4>Profile</h4>
           </a>
         ) : (
           <a className="hover-brighter">
-            <Image src="/login-solid.svg" width={20} height={20} alt="Nav" />
+            <Image src="/icons/login-solid.svg" width={20} height={20} alt="Nav" />
             <h4>Login</h4>
           </a>
         )}
@@ -97,12 +97,6 @@ const Nav = () => {
         @media all and (max-height: 420px) {
           nav {
             height: 30px;
-          }
-        }
-        @media (prefers-color-scheme: dark) {
-          nav {
-            background-color: black;
-            box-shadow: 0px -1px 5px #333333;
           }
         }
       `}</style>

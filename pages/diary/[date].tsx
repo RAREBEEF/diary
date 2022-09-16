@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import Button from "../../components/Button";
+import Seo from "../../components/Seo";
 import {
   deleteDiaryThunk,
   getDiariesThunk,
@@ -162,6 +163,9 @@ const Diary = () => {
 
   return init ? (
     <section className="page-container">
+      <Seo
+        title={`Dailiary | ${todayOrTheDay === "오늘" ? "Today" : queryDate}`}
+      />
       <nav>
         <div className="btn-wrapper">
           <Link href="/">
@@ -377,7 +381,9 @@ const Diary = () => {
       `}</style>
     </section>
   ) : (
-    <></>
+    <>
+      <Seo />
+    </>
   );
 };
 

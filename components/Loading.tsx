@@ -9,10 +9,11 @@ interface Props {
 const Loading: React.FC<Props> = ({ isShow = true, text = "로딩 중" }) => {
   return (
     <div className={classNames(isShow ? "show" : "", "no-drag")}>
-      <Image src="/vercel.svg" width="200" height="70" alt="Loading..." />
+      <Image src="/logos/logo.svg" width="200" height="150" alt="Loading..." />
       <p>{text}</p>
       <style jsx>{`
         div {
+          background-color: rgba(255, 255, 255, 0.3);
           width: 100%;
           height: 100vh;
           display: flex;

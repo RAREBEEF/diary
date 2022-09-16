@@ -6,17 +6,13 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
-import { auth, db, storage } from "../fb";
+import { auth } from "../fb";
 import { sendPasswordResetEmail } from "firebase/auth";
 import useInput from "../hooks/useInput";
-import {
-  diaryInitialization,
-  periodInitialization,
-} from "../redux/modules/setDiaries";
+import { diaryInitialization } from "../redux/modules/setDiaries";
 import { login, loginDataStateType } from "../redux/modules/setLogin";
 import { reduxStateType } from "../redux/store";
-import { deleteDoc, doc } from "firebase/firestore";
-import { deleteObject, ref } from "firebase/storage";
+import Seo from "../components/Seo";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -41,18 +37,20 @@ const Profile = () => {
 
   const onLogoutClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    const ok = window.confirm(`로그아웃 하시겠습니까?`);
 
-    auth.signOut();
+    if (ok)
+      auth.signOut().then(() => {
+        dispatch(diaryInitialization());
 
-    dispatch(diaryInitialization());
-
-    dispatch(
-      login.actions.setLogIn({
-        init: true,
-        isLoggedIn: false,
-        userData: { user: null, uid: "", displayName: "" },
-      })
-    );
+        dispatch(
+          login.actions.setLogIn({
+            init: true,
+            isLoggedIn: false,
+            userData: { user: null, uid: "", displayName: "" },
+          })
+        );
+      });
   };
 
   const onDisplayNameChangeClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -124,10 +122,6 @@ const Profile = () => {
       if (sure) {
         deleteUser(auth.currentUser)
           .then(() => {
-            const storageRef = ref(storage, uid);
-            deleteObject(storageRef);
-            deleteDoc(doc(db, uid));
-
             dispatch(diaryInitialization());
             dispatch(
               login.actions.setLogIn({
@@ -156,7 +150,7 @@ const Profile = () => {
     const ok = window.confirm(
       `마지막 로그인이 너무 오래되어 재로그인이 필요합니다.`
     );
-    if (ok) {
+    if (ok)
       router.push(
         {
           pathname: `/login`,
@@ -166,11 +160,11 @@ const Profile = () => {
         },
         "/login"
       );
-    }
   };
 
   return (
     <section className="page-container">
+      <Seo title="Dailiary | Profile" />
       <div>
         <nav>
           <div className="btn-wrapper">
@@ -215,7 +209,12 @@ const Profile = () => {
             <h4>계정 설정</h4>
             <div className="inner-wrapper">
               <Button onClick={onLogoutClick}>로그아웃</Button>
-              <Button onClick={onDeleteAccountClick}>탈퇴</Button>
+              <Button
+                onClick={onDeleteAccountClick}
+                style={{ color: "firebrick", borderColor: "firebrick" }}
+              >
+                탈퇴
+              </Button>
             </div>
           </div>
         </section>

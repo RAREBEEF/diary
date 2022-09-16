@@ -6,7 +6,11 @@ import _ from "lodash";
 import { useSelector } from "react-redux";
 import { reduxStateType } from "../redux/store";
 import { useDispatch } from "react-redux";
-import { getDiariesThunk } from "../redux/modules/setDiaries";
+import {
+  getDiariesStart,
+  getDiariesSuccess,
+  getDiariesThunk,
+} from "../redux/modules/setDiaries";
 import { getHoliThunk } from "../redux/modules/setHoli";
 
 /**

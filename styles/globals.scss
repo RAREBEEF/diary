@@ -27,17 +27,17 @@ body {
 .hover-bigger {
   transition: transform 0.3s;
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+// @media (prefers-color-scheme: dark) {
+//   html {
+//     color-scheme: dark;
+//   }
 
-  body {
-    color: white;
-    background: black;
-  }
-}
+//   body {
+//     color: $theme-color;
+//     background: black;
+//   }
+// }

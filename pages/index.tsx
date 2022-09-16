@@ -7,6 +7,7 @@ import { reduxStateType } from "../redux/store";
 import { DiariesDataStateType } from "../redux/modules/setDiaries";
 import { NextPage } from "next";
 import { useEffect } from "react";
+import Seo from "../components/Seo";
 
 const Home: NextPage = () => {
   const { loading, latestTab } = useSelector(
@@ -22,6 +23,7 @@ const Home: NextPage = () => {
 
   return (
     <section className="page-container">
+      <Seo title="Dailiary | Home" />
       <Calendar />
       <PeriodList />
       <Footer />

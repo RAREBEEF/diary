@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -17,9 +18,11 @@ import Button from "./Button";
 
 const PeriodList = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const {
     calendarData: { today },
     loginData: {
+      isLoggedIn,
       userData: { uid },
     },
     diariesData: { periodData: data, error, periodPage },
@@ -71,6 +74,12 @@ const PeriodList = () => {
    * period 데이터를 초기화 후 새로 불러온다.*/
   const onLoadClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
+
     if (fromDate === "" || toDate === "") {
       window.alert("기간을 입력해 주세요.");
       return;
@@ -144,7 +153,7 @@ const PeriodList = () => {
               />
               <div className="icon--calendar">
                 <Image
-                  src="/calendar-solid.svg"
+                  src="/icons/calendar-solid.svg"
                   width={20}
                   height={20}
                   alt={"From date"}
@@ -163,7 +172,7 @@ const PeriodList = () => {
               />
               <div className="icon--calendar">
                 <Image
-                  src="/calendar-solid.svg"
+                  src="/icons/calendar-solid.svg"
                   width={20}
                   height={20}
                   alt={"From date"}
@@ -183,7 +192,9 @@ const PeriodList = () => {
         <section className="diaries">
           <ul>
             {error ? (
-              <p>로드 실패</p>
+              <p className="fail">로드 실패</p>
+            ) : pages.length === 0 ? (
+              <p className="empty">비어있음</p>
             ) : (
               pages[periodPage]?.map((diary, i) => (
                 <li key={i} className="hover-bigger">
@@ -382,6 +393,10 @@ const PeriodList = () => {
             }
 
             .diaries {
+              .empty,
+              .fail {
+                text-align: center;
+              }
               ul {
                 li {
                   border-bottom: 0.5px solid $gray-color;
