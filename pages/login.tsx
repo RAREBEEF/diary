@@ -28,7 +28,7 @@ const Login = () => {
       <div className="img-wrapper">
         <Image
           src="/logos/logo.svg"
-          width="80"
+          width="150"
           height="20"
           layout="responsive"
           objectFit="contain"
