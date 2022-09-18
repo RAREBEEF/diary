@@ -260,8 +260,8 @@ const Write = () => {
           </a>
         </Link>
         <hgroup>
-          <h3>{`${year} / ${month} / ${date}`}</h3>
-          <h2>{`${todayOrTheDay}`}의 일기</h2>
+          <h2>{`${year} / ${month} / ${date}`}</h2>
+          <h1>{`${todayOrTheDay}`}의 일기</h1>
         </hgroup>
       </nav>
 
@@ -402,6 +402,7 @@ const Write = () => {
           }
 
           nav {
+            word-break: keep-all;
             padding: {
               top: 50px;
               bottom: 30px;
@@ -412,7 +413,7 @@ const Write = () => {
               color: $gray-color;
               margin-top: 20px;
 
-              h2 {
+              h1 {
                 width: fit-content;
                 font: {
                   size: 30px;
@@ -420,7 +421,7 @@ const Write = () => {
                 }
               }
 
-              h3 {
+              h2 {
                 margin: {
                   left: 2.5px;
                 }
@@ -518,6 +519,15 @@ const Write = () => {
               display: flex;
               gap: 10px;
               align-self: flex-end;
+            }
+          }
+        }
+
+        @media all and (max-width: 380px) {
+          .page-container {
+            padding: {
+              left: 20px;
+              right: 20px;
             }
           }
         }

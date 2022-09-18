@@ -136,9 +136,7 @@ const PeriodList = () => {
   return (
     <section className="container" onClick={onContainerClick}>
       <div className="inner-wrapper">
-        <hgroup>
-          <h2>일기 모아보기</h2>
-        </hgroup>
+        <h2>일기 모아보기</h2>
         <nav className="nav--period">
           <div className="inputs-wrapper">
             <div className={classNames("input-wrapper", "hover-brighter")}>
@@ -307,22 +305,20 @@ const PeriodList = () => {
               bottom: 250px;
             }
 
-            hgroup {
-              h2 {
-                width: fit-content;
-                width: 100%;
-                max-width: 1000px;
-                margin: auto;
-                padding: {
-                  top: 50px;
-                }
-                width: fit-content;
-                color: $gray-color;
-                margin-top: 20px;
-                font: {
-                  size: 30px;
-                  weight: 700;
-                }
+            h2 {
+              width: fit-content;
+              width: 100%;
+              max-width: 1000px;
+              margin: auto;
+              padding: {
+                top: 50px;
+              }
+              width: fit-content;
+              color: $gray-color;
+              margin-top: 20px;
+              font: {
+                size: 30px;
+                weight: 700;
               }
             }
 
@@ -352,7 +348,7 @@ const PeriodList = () => {
                     border-radius: 15px;
                     padding: 5px 10px;
                     height: 35px;
-                    width: 125px;
+                    /* width: 125px; */
                     cursor: pointer;
                     /* &::-webkit-calendar-picker-indicator {
                       opacity: 0;

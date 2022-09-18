@@ -187,8 +187,8 @@ const Diary = () => {
           </section>
         </div>
         <hgroup>
-          <h3>{`${year} / ${month} / ${date}`}</h3>
-          <h2>{diary.title}</h2>
+          <h2>{`${year} / ${month} / ${date}`}</h2>
+          <h1>{diary.title}</h1>
         </hgroup>
       </nav>
       <section className="contents">
@@ -196,13 +196,13 @@ const Diary = () => {
           <div className="etc-content-wrapper">
             {diary.weather && (
               <section className="weather">
-                <h4>{`${todayOrTheDay}의 날씨`}</h4>
+                <h3>{`${todayOrTheDay}의 날씨`}</h3>
                 <p>{diary.weather}</p>
               </section>
             )}
             {diary.mood && (
               <section className="weather">
-                <h4>{`${todayOrTheDay}의 기분`}</h4>
+                <h3>{`${todayOrTheDay}의 기분`}</h3>
                 <p>{diary.mood}</p>
               </section>
             )}
@@ -211,7 +211,7 @@ const Diary = () => {
         <div className="main-content-wrapper">
           {diary.attachmentUrl && (
             <section className="image">
-              <h4> {`${todayOrTheDay}의 사진`}</h4>
+              <h3> {`${todayOrTheDay}의 사진`}</h3>
               <div className="image-wrapper">
                 <img
                   src={diary.attachmentUrl}
@@ -227,7 +227,7 @@ const Diary = () => {
 
           {diary.content && (
             <section className="content">
-              <h4> {`${todayOrTheDay}의 하루`}</h4>
+              <h3> {`${todayOrTheDay}의 하루`}</h3>
               <p>{diary.content}</p>
             </section>
           )}
@@ -253,6 +253,7 @@ const Diary = () => {
           }
 
           nav {
+            word-break: keep-all;
             padding: {
               top: 50px;
               bottom: 10px;
@@ -273,7 +274,7 @@ const Diary = () => {
               color: $gray-color;
               margin-top: 20px;
 
-              h2 {
+              h1 {
                 width: fit-content;
                 font: {
                   size: 30px;
@@ -281,7 +282,7 @@ const Diary = () => {
                 }
               }
 
-              h3 {
+              h2 {
                 margin: {
                   left: 2.5px;
                 }
@@ -304,7 +305,7 @@ const Diary = () => {
                 size: 16px;
               }
 
-              h4 {
+              h3 {
                 color: $gray-color;
                 padding: 0px 10px 10px;
                 font: {
@@ -376,6 +377,15 @@ const Diary = () => {
                   width: 100%;
                 }
               }
+            }
+          }
+        }
+
+        @media all and (max-width: 380px) {
+          .page-container {
+            padding: {
+              left: 20px;
+              right: 20px;
             }
           }
         }

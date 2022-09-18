@@ -173,14 +173,14 @@ const Profile = () => {
             </Link>
           </div>
           <hgroup>
-            <h3>프로필 설정</h3>
             <h2>{displayName}</h2>
+            <h1>프로필 설정</h1>
           </hgroup>
         </nav>
 
         <section className="contents">
           <div className="displayName">
-            <h4>이름</h4>
+            <h3>이름</h3>
             <div className="inner-wrapper">
               <input
                 type="text"
@@ -199,14 +199,14 @@ const Profile = () => {
           </div>
 
           <div className="password">
-            <h4>비밀번호</h4>
+            <h3>비밀번호</h3>
             <div className="inner-wrapper">
               <Button onClick={onPwResetClick}>재설정 메일 발송</Button>
             </div>
           </div>
 
           <div className="account">
-            <h4>계정 설정</h4>
+            <h3>계정 설정</h3>
             <div className="inner-wrapper">
               <Button onClick={onLogoutClick}>로그아웃</Button>
               <Button
@@ -242,6 +242,7 @@ const Profile = () => {
 
           nav {
             max-width: 1000px;
+            word-break: keep-all;
             padding: {
               top: 50px;
               bottom: 50px;
@@ -252,7 +253,7 @@ const Profile = () => {
               color: $gray-color;
               margin-top: 20px;
 
-              h2 {
+              h1 {
                 width: fit-content;
                 font: {
                   size: 30px;
@@ -260,7 +261,7 @@ const Profile = () => {
                 }
               }
 
-              h3 {
+              h2 {
                 margin: {
                   left: 2.5px;
                 }
@@ -286,7 +287,7 @@ const Profile = () => {
               border-bottom: 0.5px solid $gray-color;
               padding-bottom: 40px;
 
-              h4 {
+              h3 {
                 color: $gray-color;
                 font: {
                   size: 20px;
@@ -308,6 +309,17 @@ const Profile = () => {
                     size: 16px;
                   }
                 }
+              }
+            }
+          }
+        }
+
+        @media all and (max-width: 380px) {
+          .page-container {
+            & > div {
+              padding: {
+                left: 20px;
+                right: 20px;
               }
             }
           }
