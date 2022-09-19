@@ -256,7 +256,7 @@ const Diary = () => {
             word-break: keep-all;
             padding: {
               top: 50px;
-              bottom: 10px;
+              bottom: 30px;
             }
 
             .btn-wrapper {
@@ -341,7 +341,7 @@ const Diary = () => {
 
               .image,
               .content {
-                padding-bottom: 40px;
+                padding-bottom: 20px;
               }
 
               .image {
