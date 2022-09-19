@@ -120,7 +120,8 @@ const Layout: React.FC<Props> = ({ children }) => {
     <>
       {children}
       <Nav />
-      {(deferredPrompt || (!isStandalone && !installClicked)) && (
+      {(deferredPrompt ||
+        (!isStandalone && !installClicked && !deferredPrompt)) && (
         <Button
           onClick={onInstallClick}
           style={{
