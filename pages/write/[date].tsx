@@ -446,7 +446,7 @@ const Write = () => {
               .etc-input-wrapper {
                 display: flex;
                 flex-wrap: wrap;
-                row-gap: 5px;
+                row-gap: 20px;
                 input,
                 datalist {
                   flex-grow: 1;
