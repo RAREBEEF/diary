@@ -300,6 +300,8 @@ const Write = () => {
               <option value="소나기 🌧">소나기 🌧</option>
               <option value="태풍 🌪">태풍 🌪</option>
               <option value="안개 🌫">안개 🌫</option>
+              <option value="더움 🥵">더움 🥵</option>
+              <option value="추움 🥶">추움 🥶</option>
             </datalist>
             <input
               className="mood"
@@ -317,9 +319,11 @@ const Write = () => {
               <option value="슬픔 😢">슬픔 😢</option>
               <option value="신남 🥳">신남 🥳</option>
               <option value="설렘 🥰">설렘 🥰</option>
-              <option value="긴장 😰">긴장 😰</option>
+              <option value="긴장 😨">긴장 😨</option>
               <option value="분노 😡">분노 😡</option>
               <option value="멘붕 🤯">멘붕 🤯</option>
+              <option value="힘듦 😓">힘듦 😓</option>
+              <option value="피곤 🥱">피곤 🥱</option>
             </datalist>
           </div>
           <textarea
