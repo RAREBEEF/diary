@@ -430,6 +430,17 @@ const PeriodList = () => {
             }
           }
         }
+
+        @media all and (max-width: 380px) {
+          .container {
+            .inner-wrapper {
+              padding: {
+                left: 20px;
+                right: 20px;
+              }
+            }
+          }
+        }
       `}</style>
     </section>
   );
