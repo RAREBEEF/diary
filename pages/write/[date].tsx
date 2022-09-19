@@ -524,7 +524,7 @@ const Write = () => {
           }
         }
 
-        @media all and (max-width: 380px) {
+        @media all and (max-width: 500px) {
           .page-container {
             padding: {
               left: 20px;

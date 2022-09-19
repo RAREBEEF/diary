@@ -431,7 +431,7 @@ const PeriodList = () => {
           }
         }
 
-        @media all and (max-width: 380px) {
+        @media all and (max-width: 500px) {
           .container {
             .inner-wrapper {
               padding: {

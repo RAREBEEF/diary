@@ -366,6 +366,10 @@ const Diary = () => {
 
         @media all and (max-width: 500px) {
           .page-container {
+            padding: {
+              left: 20px;
+              right: 20px;
+            }
             .contents {
               .main-content-wrapper {
                 flex-direction: column;
@@ -386,15 +390,6 @@ const Diary = () => {
                   }
                 }
               }
-            }
-          }
-        }
-
-        @media all and (max-width: 380px) {
-          .page-container {
-            padding: {
-              left: 20px;
-              right: 20px;
             }
           }
         }
