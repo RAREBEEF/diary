@@ -376,6 +376,15 @@ const Diary = () => {
                 .content {
                   width: 100%;
                 }
+
+                .image {
+                  .image-wrapper {
+                    padding: {
+                      left: 15px;
+                      right: 15px;
+                    }
+                  }
+                }
               }
             }
           }

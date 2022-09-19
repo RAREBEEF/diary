@@ -29,7 +29,7 @@ const Login = () => {
         <Image
           src="/logos/logo.svg"
           width="150"
-          height="20"
+          height="25"
           layout="responsive"
           objectFit="contain"
           alt="Dailiary"

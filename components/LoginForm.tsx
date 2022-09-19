@@ -320,7 +320,7 @@ const LoginForm: React.FC<Props> = ({ reauth }) => {
             .input-wrapper {
               width: 30vw;
               max-width: 300px;
-              min-width: 200px;
+              min-width: 240px;
               display: flex;
               flex-direction: column;
               gap: 5px;

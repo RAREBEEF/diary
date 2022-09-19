@@ -435,13 +435,13 @@ const Write = () => {
             flex-direction: column;
             height: 100%;
             gap: 30px;
-            margin-bottom: 35px;
+            margin-bottom: 60px;
 
             .input-wrapper {
               flex-grow: 1;
               display: flex;
               flex-direction: column;
-              gap: 5px;
+              gap: 20px;
 
               .etc-input-wrapper {
                 display: flex;
@@ -471,6 +471,7 @@ const Write = () => {
                 }
 
                 &.content {
+                  min-height: 500px;
                   padding: 15px;
                   border: 1.5px solid $gray-color;
                   border-radius: 5px;
