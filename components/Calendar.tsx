@@ -9,7 +9,7 @@ import { setLatestTab } from "../redux/modules/setDiaries";
 import { reduxStateType } from "../redux/store";
 import Button from "./Button";
 import styles from "./Calendar.module.scss";
-import LodaingModal from "./LoadingModal";
+import LodaingHoliday from "./LoadingHoliday";
 
 const Calendar = () => {
   const dispatch = useDispatch();
@@ -142,7 +142,7 @@ const Calendar = () => {
         </thead>
         <tbody>{calendar.map((el) => el)}</tbody>
       </table>
-      <LodaingModal isShow={holiLoading} />
+      <LodaingHoliday isShow={holiLoading} />
     </main>
   );
 };
