@@ -18,7 +18,7 @@ const Footer = () => {
         </div>
         <div>
           <span>
-            <Link href="https://github.com/RAREBEEF/dailiary">
+            <Link href="https://github.com/RAREBEEF/diary">
               <a>github</a>
             </Link>
           </span>
