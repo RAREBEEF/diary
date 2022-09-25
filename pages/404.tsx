@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Seo from "../components/Seo";
 
 const NotFound = () => {
   return (
     <section className="page-container">
+      <Seo title="일기장 | 404"/>
       <h1>
         <strong>404</strong> Not Found
       </h1>

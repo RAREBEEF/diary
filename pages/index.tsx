@@ -23,7 +23,7 @@ const Home: NextPage = () => {
 
   return (
     <section className="page-container">
-      <Seo title="Dailiary | Home" />
+      <Seo title="일기장 | 홈" />
       <Calendar />
       <PeriodList />
       <Footer />

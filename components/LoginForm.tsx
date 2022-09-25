@@ -53,7 +53,7 @@ const LoginForm: React.FC<Props> = ({ reauth }) => {
   };
 
   // 전송
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (loading) return;
@@ -70,7 +70,7 @@ const LoginForm: React.FC<Props> = ({ reauth }) => {
     if (formAction === "pwReset") {
       setLoading(true);
 
-      sendPasswordResetEmail(auth, email)
+      await sendPasswordResetEmail(auth, email)
         .then(() => {
           setAlert("메일이 발송되었습니다.");
         })
@@ -99,7 +99,7 @@ const LoginForm: React.FC<Props> = ({ reauth }) => {
       else if (pw !== pwCheck) setAlert(`비밀번호 확인이 일치하지 않습니다.`);
       else if (pw !== pwCheck) setAlert(`비밀번호 확인이 일치하지 않습니다.`);
       else
-        createUserWithEmailAndPassword(auth, email, pw)
+        await createUserWithEmailAndPassword(auth, email, pw)
           .then((userCredential) => {
             const user = userCredential.user;
             updateProfile(user, {
@@ -131,7 +131,7 @@ const LoginForm: React.FC<Props> = ({ reauth }) => {
     } else if (formAction === "login") {
       setLoading(true);
 
-      signInWithEmailAndPassword(auth, email, pw)
+      await signInWithEmailAndPassword(auth, email, pw)
         .then((userCredential) => {
           const user = userCredential.user;
           dispatch(
@@ -147,10 +147,13 @@ const LoginForm: React.FC<Props> = ({ reauth }) => {
         })
         .catch((error) => {
           switch (error.code) {
-            case "auth/user-not-found":
+            case "auth/invalid-email":
               setAlert("잘못된 이메일 형식입니다.");
               break;
-            case "auth/invalid-email" || "auth/wrong-password":
+            case "auth/user-not-found":
+              setAlert("이메일 혹은 비밀번호가 일치하지 않습니다.");
+              break;
+            case "auth/wrong-password":
               setAlert("이메일 혹은 비밀번호가 일치하지 않습니다.");
               break;
             default:

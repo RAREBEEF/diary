@@ -165,7 +165,7 @@ const Diary = () => {
   return init ? (
     <section className="page-container">
       <Seo
-        title={`Dailiary | ${todayOrTheDay === "오늘" ? "Today" : queryDate}`}
+        title={`일기장 | ${todayOrTheDay === "오늘" ? "오늘" : queryDate}`}
       />
       <nav>
         <div className="btn-wrapper">

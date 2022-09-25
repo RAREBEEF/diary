@@ -24,7 +24,7 @@ const Login = () => {
 
   return (
     <section className="page-container">
-      <Seo title="Dailiary | Login" />
+      <Seo title="일기장 | 로그인" />
       <div className="img-wrapper">
         <Image
           src="/logos/logo.svg"

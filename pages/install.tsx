@@ -1,10 +1,11 @@
 import Link from "next/link";
-import Button from "../components/Button";
 import Footer from "../components/Footer";
+import Seo from "../components/Seo";
 
 const Install = () => {
   return (
     <section className="page-container">
+      <Seo title="일기장 | 설치"/>
       <div>
         <nav>
           <div className="btn-wrapper">

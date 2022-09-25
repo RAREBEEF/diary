@@ -164,7 +164,7 @@ const Profile = () => {
 
   return (
     <section className="page-container">
-      <Seo title="Dailiary | Profile" />
+      <Seo title="일기장 | 프로필" />
       <div>
         <nav>
           <div className="btn-wrapper">

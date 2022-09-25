@@ -1,8 +1,8 @@
-# **DAILIARY**
+# **일기장**
 
 ![](https://velog.velcdn.com/images/drrobot409/post/bcce4ab7-cab9-4d59-84a0-2b59f30d899d/image.png)
 
-<a href="https://dailiary.netlify.app">DAILIARY</a>  
+<a href="https://diary-daily.netlify.app">DAILIARY</a>  
 
 Next.js로 일기장 웹 애플리케이션을 만들어 보았다. Next.js를 활용한 첫 프로젝트이다.
 

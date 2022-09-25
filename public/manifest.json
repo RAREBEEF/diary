@@ -4,9 +4,9 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Dailiary",
-  "short_name": "Dailiary",
-  "description": "Dailiary는 오늘의 기분, 날씨, 사진 등 매일의 하루를 기록할 수 있는 일기장입니다. 로그인 후 첫 일기를 작성해 보세요.",
+  "name": "일기장",
+  "short_name": "일기장",
+  "description": "오늘의 기분, 날씨, 사진 등 매일의 하루를 기록할 수 있는 일기장입니다. 로그인 후 첫 일기를 작성해 보세요.",
   "icons": [
     {
       "src": "/logos/apple-touch-icon-57x57.png",
