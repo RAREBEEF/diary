@@ -37,9 +37,19 @@ const Write = () => {
     onChange: onWeatherChange,
   } = useInput("");
   const {
+    value: directWeather,
+    setValue: setDirectWeather,
+    onChange: onDirectWeatherChange,
+  } = useInput("");
+  const {
     value: mood,
     setValue: setMood,
     onChange: onMoodChange,
+  } = useInput("");
+  const {
+    value: directMood,
+    setValue: setDirectMood,
+    onChange: onDirectMoodChange,
   } = useInput("");
   const {
     value: content,
@@ -164,8 +174,8 @@ const Write = () => {
       date:
         typeof queryDate === "string" ? queryDate : `${year}${month}${date}`,
       title,
-      weather,
-      mood,
+      weather: weather === "direct" ? directWeather : weather,
+      mood: mood === "direct" ? directMood : mood,
       content,
     };
 
@@ -282,7 +292,7 @@ const Write = () => {
             >{`${year} / ${month} / ${date}`}</option>
           </datalist>
           <div className="etc-input-wrapper">
-            <input
+            {/* <input
               className="weather"
               list="weather-list"
               type="text"
@@ -302,8 +312,86 @@ const Write = () => {
               <option value="안개 🌫">안개 🌫</option>
               <option value="더움 🥵">더움 🥵</option>
               <option value="추움 🥶">추움 🥶</option>
-            </datalist>
-            <input
+            </datalist> */}
+            {weather !== "direct" ? (
+              <select
+                name="weather"
+                className="weather"
+                value={weather}
+                onChange={onWeatherChange}
+              >
+                <option
+                  value=""
+                  disabled
+                  defaultChecked
+                  style={{ display: "none" }}
+                >
+                  오늘의 날씨
+                </option>
+                <option value="">선택 안함</option>
+                <option value="맑음 ☀️">맑음 ☀️</option>
+                <option value="흐림 ⛅️">흐림 ⛅️</option>
+                <option value="비 🌦">비 🌦</option>
+                <option value="눈 🌨">눈 🌨</option>
+                <option value="소나기 🌧">소나기 🌧</option>
+                <option value="태풍 🌪">태풍 🌪</option>
+                <option value="안개 🌫">안개 🌫</option>
+                <option value="더움 🥵">더움 🥵</option>
+                <option value="추움 🥶">추움 🥶</option>
+                <option value="direct">직접 입력</option>
+              </select>
+            ) : (
+              <input
+                value={directWeather}
+                onChange={onDirectWeatherChange}
+                className="direct"
+                autoFocus
+                onBlur={() => {
+                  directWeather === "" && setWeather("");
+                }}
+              />
+            )}
+
+            {mood !== "direct" ? (
+              <select
+                name="mood"
+                className="mood"
+                value={mood}
+                onChange={onMoodChange}
+              >
+                <option
+                  value=""
+                  defaultChecked
+                  disabled
+                  style={{ display: "none" }}
+                >
+                  오늘의 기분
+                </option>
+                <option value="">선택 안함</option>
+                <option value="보통 😐">보통 😐</option>
+                <option value="기쁨 😃">기쁨 😃</option>
+                <option value="슬픔 😢">슬픔 😢</option>
+                <option value="신남 🥳">신남 🥳</option>
+                <option value="설렘 🥰">설렘 🥰</option>
+                <option value="긴장 😨">긴장 😨</option>
+                <option value="분노 😡">분노 😡</option>
+                <option value="멘붕 🤯">멘붕 🤯</option>
+                <option value="피곤 🥱">피곤 🥱</option>
+                <option value="direct">직접 입력</option>
+              </select>
+            ) : (
+              <input
+                value={directMood}
+                onChange={onDirectMoodChange}
+                className="direct"
+                autoFocus
+                onBlur={() => {
+                  directMood === "" && setMood("");
+                }}
+              />
+            )}
+
+            {/* <input
               className="mood"
               list="mood-list"
               type="text"
@@ -324,7 +412,7 @@ const Write = () => {
               <option value="멘붕 🤯">멘붕 🤯</option>
               <option value="힘듦 😓">힘듦 😓</option>
               <option value="피곤 🥱">피곤 🥱</option>
-            </datalist>
+            </datalist> */}
           </div>
           <textarea
             className="content"
@@ -451,16 +539,17 @@ const Write = () => {
                 display: flex;
                 flex-wrap: wrap;
                 row-gap: 20px;
-                input,
-                datalist {
+                select,
+                input {
                   flex-grow: 1;
+                  color: $gray-color;
                 }
               }
 
               input,
               textarea,
               label,
-              datalist {
+              select {
                 padding: 10px;
                 font: {
                   size: 16px;
@@ -468,7 +557,8 @@ const Write = () => {
 
                 &.title,
                 &.weather,
-                &.mood {
+                &.mood,
+                &.direct {
                   border-bottom: 1.5px solid $gray-color;
                   margin: 0px 5px;
                   padding-bottom: 3px;

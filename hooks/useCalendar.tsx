@@ -155,7 +155,7 @@ const useCalendar = (year: number, month: number) => {
   // 2. 모든 칸을 1주 단위(7개)로 끊어서 <tr>로 감싸기
   const calendar = [];
   for (let i = 1; i <= 6; i++) {
-    // 2-1. 모든 칸을 저장한 배열에서 맨 앞 7개 날짜 가져오기.
+    // 2-1. 1에서 만든 배열에서 맨 앞 7개 날짜 가져오기.
     const weekArr = allDaysArr.slice(0, 7);
 
     // 2-2. 마지막 주차일 경우 뒤쪽의 공백 계산
