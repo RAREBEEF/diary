@@ -398,7 +398,7 @@ const Diary = () => {
                   justify-content: center;
                   gap: 30px;
                   padding: {
-                    top: 20px;
+                    top: 5px;
                     left: 10px;
                     right: 10px;
                     bottom: 20px;
