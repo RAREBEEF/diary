@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -214,13 +213,13 @@ const Diary = () => {
             <section className="image">
               <h3> {`${todayOrTheDay}의 사진`}</h3>
               <div className="image-wrapper">
-                <img
+                <Image
                   src={diary.attachmentUrl}
                   alt={"attachment"}
-                  // width={100}
-                  // height={80}
-                  // layout="responsive"
-                  // objectFit="contain"
+                  width={100}
+                  height={100}
+                  layout="responsive"
+                  objectFit="contain"
                 />
               </div>
             </section>
@@ -378,12 +377,11 @@ const Diary = () => {
                 height: fit-content;
                 flex-grow: 1;
                 .image-wrapper {
+                  position: relative;
                   margin-top: 5px;
-                  img {
-                    border-radius: 5px;
-                    padding: 5px;
-                    box-shadow: 3px 3px 5px $gray-color;
-                  }
+                  border-radius: 5px;
+                  padding: 5px;
+                  box-shadow: 3px 3px 5px $gray-color;
                 }
               }
 
