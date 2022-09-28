@@ -40,19 +40,9 @@ const Write = () => {
     onChange: onWeatherChange,
   } = useInput("");
   const {
-    value: directWeather,
-    setValue: setDirectWeather,
-    onChange: onDirectWeatherChange,
-  } = useInput("");
-  const {
     value: mood,
     setValue: setMood,
     onChange: onMoodChange,
-  } = useInput("");
-  const {
-    value: directMood,
-    setValue: setDirectMood,
-    onChange: onDirectMoodChange,
   } = useInput("");
   const {
     value: movieKeyword,
@@ -185,8 +175,8 @@ const Write = () => {
       date:
         typeof queryDate === "string" ? queryDate : `${year}${month}${date}`,
       title,
-      weather: weather === "direct" ? directWeather : weather,
-      mood: mood === "direct" ? directMood : mood,
+      weather,
+      mood,
       content,
       movies: selectedMovies,
     };
@@ -358,97 +348,64 @@ const Write = () => {
           </datalist>
 
           <div className="etc-input-wrapper">
-            {weather !== "direct" ? (
-              <select
-                name="weather"
-                className="weather"
-                value={weather}
-                onChange={onWeatherChange}
-              >
-                <option
-                  value=""
-                  disabled
-                  defaultChecked
-                  style={{ display: "none" }}
-                >
-                  오늘의 날씨
-                </option>
-                <option value="">선택 안함</option>
-                <option value="맑음 ☀️">맑음 ☀️</option>
-                <option value="흐림 ⛅️">흐림 ⛅️</option>
-                <option value="비 🌦">비 🌦</option>
-                <option value="눈 🌨">눈 🌨</option>
-                <option value="소나기 🌧">소나기 🌧</option>
-                <option value="태풍 🌪">태풍 🌪</option>
-                <option value="안개 🌫">안개 🌫</option>
-                <option value="더움 🥵">더움 🥵</option>
-                <option value="추움 🥶">추움 🥶</option>
-                <option value="direct">직접 입력</option>
-              </select>
-            ) : (
-              <input
-                value={directWeather}
-                onChange={onDirectWeatherChange}
-                className="direct"
-                autoFocus
-                onBlur={() => {
-                  directWeather === "" && setWeather("");
-                }}
-              />
-            )}
-
-            {mood !== "direct" ? (
-              <select
-                name="mood"
-                className="mood"
-                value={mood}
-                onChange={onMoodChange}
-              >
-                <option
-                  value=""
-                  defaultChecked
-                  disabled
-                  style={{ display: "none" }}
-                >
-                  오늘의 기분
-                </option>
-                <option value="">선택 안함</option>
-                <option value="보통 😐">보통 😐</option>
-                <option value="기쁨 😃">기쁨 😃</option>
-                <option value="슬픔 😢">슬픔 😢</option>
-                <option value="신남 🥳">신남 🥳</option>
-                <option value="설렘 🥰">설렘 🥰</option>
-                <option value="긴장 😨">긴장 😨</option>
-                <option value="분노 😡">분노 😡</option>
-                <option value="멘붕 🤯">멘붕 🤯</option>
-                <option value="피곤 🥱">피곤 🥱</option>
-                <option value="direct">직접 입력</option>
-              </select>
-            ) : (
-              <input
-                value={directMood}
-                onChange={onDirectMoodChange}
-                className="direct"
-                autoFocus
-                onBlur={() => {
-                  directMood === "" && setMood("");
-                }}
-              />
-            )}
+            <input
+              className="weather"
+              list="weather-list"
+              type="text"
+              value={weather}
+              onChange={onWeatherChange}
+              placeholder={`${todayOrTheDay}의 날씨`}
+              size={15}
+              maxLength={15}
+            />
+            <datalist id="weather-list">
+              <option value="맑음 ☀️">맑음 ☀️</option>
+              <option value="흐림 ⛅️">흐림 ⛅️</option>
+              <option value="비 🌦">비 🌦</option>
+              <option value="눈 🌨">눈 🌨</option>
+              <option value="소나기 🌧">소나기 🌧</option>
+              <option value="태풍 🌪">태풍 🌪</option>
+              <option value="안개 🌫">안개 🌫</option>
+              <option value="더움 🥵">더움 🥵</option>
+              <option value="추움 🥶">추움 🥶</option>
+            </datalist>
+            <input
+              className="mood"
+              list="mood-list"
+              type="text"
+              value={mood}
+              onChange={onMoodChange}
+              placeholder={`${todayOrTheDay}의 기분`}
+              size={15}
+              maxLength={15}
+            />
+            <datalist id="mood-list">
+              <option value="보통 😐">보통 😐</option>
+              <option value="기쁨 😃">기쁨 😃</option>
+              <option value="슬픔 😢">슬픔 😢</option>
+              <option value="신남 🥳">신남 🥳</option>
+              <option value="설렘 🥰">설렘 🥰</option>
+              <option value="긴장 😨">긴장 😨</option>
+              <option value="분노 😡">분노 😡</option>
+              <option value="멘붕 🤯">멘붕 🤯</option>
+              <option value="피곤 🥱">피곤 🥱</option>
+            </datalist>
           </div>
 
           <div className="movie-wrapper">
             <div className="search">
               <h4>영화 찾기</h4>
-              <input
-                className="movie"
-                list="movie-list"
-                type="text"
-                value={movieKeyword}
-                onChange={onMovieKeywordChange}
-                placeholder={`${todayOrTheDay} 본 영화`}
-              />
-              <Button onClick={onSearchMovie}>검색</Button>
+              <div className="input-wrapper">
+                <input
+                  className="movie"
+                  list="movie-list"
+                  type="text"
+                  value={movieKeyword}
+                  onChange={onMovieKeywordChange}
+                  placeholder={`제목`}
+                />
+                <Button onClick={onSearchMovie}>검색</Button>
+              </div>
               {movieResult && (
                 <>
                   <p>
@@ -656,7 +613,6 @@ const Write = () => {
                 select,
                 input {
                   flex-grow: 1;
-                  color: $gray-color;
                 }
               }
 
@@ -665,6 +621,11 @@ const Write = () => {
                 border-radius: 5px;
                 padding: 10px;
                 margin-top: 20px;
+
+                .input-wrapper {
+                  gap: 10px;
+                  margin-bottom: 20px;
+                }
 
                 .selected {
                   margin-top: 20px;
