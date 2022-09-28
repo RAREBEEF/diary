@@ -34,6 +34,7 @@ const Diary = () => {
     weather: "",
     mood: "",
     content: "",
+    movies: [],
   });
   const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
   const [redirectToWrite, setRedirectToWrite] = useState<boolean>(false);
@@ -231,6 +232,32 @@ const Diary = () => {
               <p>{diary.content}</p>
             </section>
           )}
+
+          {diary.movies && diary.movies.length !== 0 && (
+            <section className="movies">
+              <h3> {`${todayOrTheDay} 본 영화`}</h3>
+              <ul className="movie-list">
+                {diary.movies.map((movie: any, i: number) => (
+                  <li key={i} className="movie-item">
+                    {movie.image !== "" && (
+                      <Image
+                        src={
+                          "https://image.tmdb.org/t/p/original" +
+                          movie.poster_path
+                        }
+                        alt={movie.title}
+                        width={500}
+                        height={750}
+                        objectFit="contain"
+                        layout="responsive"
+                      />
+                    )}
+                    <h5>{movie.title}</h5>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
       </section>
 
@@ -340,7 +367,8 @@ const Diary = () => {
               gap: 5%;
 
               .image,
-              .content {
+              .content,
+              .movies {
                 padding-bottom: 20px;
               }
 
@@ -359,6 +387,52 @@ const Diary = () => {
                 white-space: pre-line;
                 flex-grow: 1;
                 border: none;
+              }
+
+              .movies {
+                width: 100%;
+
+                .movie-list {
+                  display: flex;
+                  flex-wrap: wrap;
+                  justify-content: center;
+                  gap: 30px;
+                  padding: {
+                    top: 20px;
+                    left: 10px;
+                    right: 10px;
+                    bottom: 20px;
+                  }
+
+                  .movie-item {
+                    position: relative;
+                    border-radius: 5px;
+                    width: 30vw;
+                    min-width: 100px;
+                    display: inline;
+                    padding: 5px;
+                    box-shadow: 3px 3px 5px $gray-color;
+
+                    h5 {
+                      position: absolute;
+                      bottom: 20px;
+                      left: 0;
+                      right: 0;
+                      width: fit-content;
+                      max-width: 130px;
+                      margin: auto;
+                      word-break: keep-all;
+                      text-align: center;
+                      background-color: rgba(0, 0, 0, 0.8);
+                      color: white;
+                      padding: 5px 10px;
+                      border-radius: 15px;
+                      font: {
+                        weight: 700;
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -386,6 +460,13 @@ const Diary = () => {
                     padding: {
                       left: 15px;
                       right: 15px;
+                    }
+                  }
+                }
+                .movies {
+                  .movie-list {
+                    .movie-item {
+                      width: 100%;
                     }
                   }
                 }

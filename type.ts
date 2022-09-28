@@ -6,4 +6,5 @@ export interface DiaryType {
   weather: string;
   mood: string;
   content: string;
+  movies: Array<any>;
 }
