@@ -220,6 +220,7 @@ const Diary = () => {
                   height={100}
                   layout="responsive"
                   objectFit="contain"
+                  priority
                 />
               </div>
             </section>
@@ -422,7 +423,7 @@ const Diary = () => {
                       left: 0;
                       right: 0;
                       width: fit-content;
-                      max-width: 130px;
+                      max-width: 90%;
                       margin: auto;
                       word-break: keep-all;
                       text-align: center;

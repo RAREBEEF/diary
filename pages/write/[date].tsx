@@ -702,7 +702,7 @@ const Write = () => {
                       left: 0;
                       right: 0;
                       width: fit-content;
-                      max-width: 130px;
+                      max-width: 80%;
                       margin: auto;
                       word-break: keep-all;
                       text-align: center;
