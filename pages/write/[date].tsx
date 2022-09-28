@@ -403,6 +403,7 @@ const Write = () => {
                   value={movieKeyword}
                   onChange={onMovieKeywordChange}
                   placeholder={`제목`}
+                  size={15}
                 />
                 <Button onClick={onSearchMovie}>검색</Button>
               </div>
@@ -623,6 +624,8 @@ const Write = () => {
                 margin-top: 20px;
 
                 .input-wrapper {
+                  flex-direction: row;
+                  align-items: center;
                   gap: 10px;
                   margin-bottom: 20px;
                 }

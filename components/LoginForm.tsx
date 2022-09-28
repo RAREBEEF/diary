@@ -321,8 +321,8 @@ const LoginForm: React.FC<Props> = ({ reauth }) => {
             align-items: center;
 
             .input-wrapper {
-              width: 30vw;
-              max-width: 300px;
+              width: 70vw;
+              max-width: 400px;
               min-width: 240px;
               display: flex;
               flex-direction: column;
