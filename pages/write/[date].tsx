@@ -74,6 +74,7 @@ const Write = () => {
   const [todayOrTheDay, setTodayOrTheDay] = useState<"오늘" | "그 날">("오늘");
   const [movieResult, setMovieResult] = useState<any>();
   const [selectedMovies, setSelectedMovies] = useState<Array<any>>([]);
+  const [searching, setSearching] = useState<boolean>(false);
   const queryDate = router.query.date;
 
   // 쿼리로 받은 날짜를 상태에 저장
@@ -261,12 +262,13 @@ const Write = () => {
    * 영화 검색
    */
   const getMovie = async (keyword: string = movieKeyword, page: number = 1) => {
+    setSearching(true);
+
     const url = `api/movie/${keyword}/${page}`;
 
     await fetch(url)
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
         setMovieResult({
           keyword,
           result,
@@ -287,6 +289,13 @@ const Write = () => {
             getMovie(movieKeyword, page - 1);
           },
         });
+        setSearching(false);
+      })
+      .catch((error) => {
+        window.alert(
+          "영화 검색에 실패하였습니다.\n잠시 후 다시 시도해 주세요."
+        );
+        setSearching(false);
       });
   };
 
@@ -316,7 +325,7 @@ const Write = () => {
       <Seo
         title={`일기장 | ${todayOrTheDay === "오늘" ? "오늘" : queryDate}`}
       />
-      <Loading isShow={loading} text="업로드 중" />
+      <Loading isShow={loading || searching} text="로딩 중" />
       <nav>
         <Link href={editMode ? `/diary/${queryDate}` : "/"}>
           <a>

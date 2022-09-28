@@ -13,6 +13,7 @@ const Loading: React.FC<Props> = ({ isShow = true, text = "로딩 중" }) => {
       <p>{text}</p>
       <style jsx>{`
         div {
+          z-index: 10;
           background-color: rgba(255, 255, 255, 0.3);
           width: 100%;
           height: 100vh;
