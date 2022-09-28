@@ -379,6 +379,11 @@ const Diary = () => {
                 flex-grow: 1;
                 .image-wrapper {
                   margin-top: 5px;
+                  img {
+                    border-radius: 5px;
+                    padding: 5px;
+                    box-shadow: 3px 3px 5px $gray-color;
+                  }
                 }
               }
 
@@ -399,8 +404,8 @@ const Diary = () => {
                   gap: 30px;
                   padding: {
                     top: 5px;
-                    left: 10px;
-                    right: 10px;
+                    left: 15px;
+                    right: 15px;
                     bottom: 20px;
                   }
 
