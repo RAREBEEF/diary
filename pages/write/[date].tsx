@@ -165,8 +165,8 @@ const Write = () => {
     if (title.length === 0) {
       window.alert("제목을 입력해 주세요.");
       return;
-    } else if (!attachment && !content) {
-      window.alert("본문과 사진 중 최소 하나 이상의 내용이 필요합니다.");
+    } else if (!attachment && !content && selectedMovies.length === 0) {
+      window.alert("최소 하나 이상의 주요 내용이 필요합니다.");
       return;
     }
 
@@ -402,67 +402,8 @@ const Write = () => {
           </div>
 
           <div className="movie-wrapper">
-            <div className="search">
-              <h4>영화 찾기</h4>
-              <div className="input-wrapper">
-                <input
-                  className="movie"
-                  list="movie-list"
-                  type="text"
-                  value={movieKeyword}
-                  onChange={onMovieKeywordChange}
-                  placeholder={`제목`}
-                  size={15}
-                />
-                <Button onClick={onSearchMovie}>검색</Button>
-              </div>
-              {movieResult && (
-                <>
-                  <p>
-                    &quot;{movieResult.keyword}&quot; 검색 결과 (
-                    {movieResult.result.total_results}건)
-                  </p>
-                  <ul className="movie-list" ref={movieSearchListRef}>
-                    {movieResult.result.page !== 1 && (
-                      <Button onClick={movieResult.getPrevMovie}>이전</Button>
-                    )}
-                    {movieResult?.result?.results?.map(
-                      (movie: any, i: number) => (
-                        <li
-                          key={i}
-                          className="movie-item"
-                          onClick={() => {
-                            onAddMovie(movie);
-                          }}
-                        >
-                          {movie.image !== "" && (
-                            <Image
-                              src={
-                                "https://image.tmdb.org/t/p/w500" +
-                                movie.poster_path
-                              }
-                              alt={movie.title}
-                              width={500}
-                              height={750}
-                              objectFit="contain"
-                              layout="responsive"
-                            />
-                          )}
-                          <h5>{movie.title}</h5>
-                        </li>
-                      )
-                    )}
-                    {movieResult.result.page !==
-                      movieResult.result.total_pages &&
-                      movieResult.result.total_pages !== 0 && (
-                        <Button onClick={movieResult.getNextMovie}>다음</Button>
-                      )}
-                  </ul>
-                </>
-              )}
-            </div>
             <div className="selected">
-              <h3>오늘 본 영화</h3>
+              <h3>{todayOrTheDay} 본 영화</h3>
               <ul className="movie-list" ref={movieSelectedListRef}>
                 {selectedMovies.length === 0 ? (
                   <p className="empty">비어있음</p>
@@ -492,6 +433,70 @@ const Write = () => {
                   ))
                 )}
               </ul>
+            </div>
+
+            <div className="search">
+              <h4>영화 검색</h4>
+              <div className="input-wrapper">
+                <input
+                  className="movie"
+                  list="movie-list"
+                  type="text"
+                  value={movieKeyword}
+                  onChange={onMovieKeywordChange}
+                  placeholder={`제목`}
+                  size={15}
+                />
+                <Button onClick={onSearchMovie}>검색</Button>
+              </div>
+              {movieResult && (
+                <>
+                  <p>
+                    &quot;{movieResult.keyword}&quot; 검색 결과 (
+                    {movieResult.result.total_results}건)
+                  </p>
+                  <ul className="movie-list" ref={movieSearchListRef}>
+                    {movieResult?.result?.results?.map(
+                      (movie: any, i: number) => (
+                        <li
+                          key={i}
+                          className="movie-item"
+                          onClick={() => {
+                            onAddMovie(movie);
+                          }}
+                        >
+                          {movie.image !== "" && (
+                            <Image
+                              src={
+                                "https://image.tmdb.org/t/p/w500" +
+                                movie.poster_path
+                              }
+                              alt={movie.title}
+                              width={500}
+                              height={750}
+                              objectFit="contain"
+                              layout="responsive"
+                            />
+                          )}
+                          <h5>{movie.title}</h5>
+                        </li>
+                      )
+                    )}
+                    <div className="pagination">
+                      {movieResult.result.page !== 1 && (
+                        <Button onClick={movieResult.getPrevMovie}>이전</Button>
+                      )}
+                      {movieResult.result.page !==
+                        movieResult.result.total_pages &&
+                        movieResult.result.total_pages !== 0 && (
+                          <Button onClick={movieResult.getNextMovie}>
+                            다음
+                          </Button>
+                        )}
+                    </div>
+                  </ul>
+                </>
+              )}
             </div>
           </div>
 
@@ -639,20 +644,6 @@ const Write = () => {
                   margin-bottom: 20px;
                 }
 
-                .selected {
-                  margin-top: 20px;
-                  .movie-list {
-                    justify-content: center;
-                    flex-wrap: wrap;
-                    gap: 20px;
-                    padding-bottom: 10px;
-                    .movie-item {
-                      min-width: 80px !important;
-                      max-width: 80px !important;
-                    }
-                  }
-                }
-
                 h3 {
                   color: $gray-color;
                   margin-bottom: 10px;
@@ -685,9 +676,11 @@ const Write = () => {
                 }
 
                 .movie-list {
-                  width: 100%;
                   overflow-x: scroll;
                   display: flex;
+                  flex-direction: column;
+                  flex-wrap: wrap;
+                  max-height: 600px;
                   align-items: center;
                   gap: 30px;
                   padding: {
@@ -724,6 +717,41 @@ const Write = () => {
                       }
                     }
                   }
+                }
+
+                .selected {
+                  position: relative;
+                  .movie-list {
+                    flex-direction: row;
+                    flex-wrap: nowrap;
+                    gap: 20px;
+                    padding-bottom: 10px;
+                    min-height: 125px;
+                    .movie-item {
+                      min-width: 80px !important;
+                      max-width: 80px !important;
+                    }
+                  }
+                }
+
+                .search {
+                  margin-top: 20px;
+                  padding-bottom: 40px;
+                  position: relative;
+                  .movie-list {
+                  }
+                }
+
+                .pagination {
+                  position: absolute;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  margin: auto;
+                  width: 100%;
+                  display: flex;
+                  justify-content: center;
+                  gap: 20px;
                 }
               }
 
