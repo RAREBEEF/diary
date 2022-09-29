@@ -482,20 +482,19 @@ const Write = () => {
                         </li>
                       )
                     )}
-                    <div className="pagination">
-                      {movieResult.result.page !== 1 && (
-                        <Button onClick={movieResult.getPrevMovie}>이전</Button>
-                      )}
-                      {movieResult.result.page !==
-                        movieResult.result.total_pages &&
-                        movieResult.result.total_pages !== 0 && (
-                          <Button onClick={movieResult.getNextMovie}>
-                            다음
-                          </Button>
-                        )}
-                    </div>
                   </ul>
                 </>
+              )}
+              {movieResult && movieResult.result.total_pages !== 0 && (
+                <div className="pagination">
+                  {movieResult.result.page !== 1 && (
+                    <Button onClick={movieResult.getPrevMovie}>이전</Button>
+                  )}
+                  {movieResult.result.page !== movieResult.result.total_pages &&
+                    movieResult.result.total_pages !== 0 && (
+                      <Button onClick={movieResult.getNextMovie}>다음</Button>
+                    )}
+                </div>
               )}
             </div>
           </div>
@@ -736,18 +735,13 @@ const Write = () => {
 
                 .search {
                   margin-top: 20px;
-                  padding-bottom: 40px;
                   position: relative;
                   .movie-list {
                   }
                 }
 
                 .pagination {
-                  position: absolute;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  margin: auto;
+                  margin: 5px auto 10px;
                   width: 100%;
                   display: flex;
                   justify-content: center;
