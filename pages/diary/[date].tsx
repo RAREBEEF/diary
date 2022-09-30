@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import Button from "../../components/Button";
 import Seo from "../../components/Seo";
+import useDecode from "../../hooks/useDecode";
 import {
   deleteDiaryThunk,
   getDiariesThunk,
@@ -26,6 +27,7 @@ const Diary = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryDate = router.query.date;
+  const decodeHTMLEntities = useDecode();
   const [diary, setDiary] = useState<DiaryType>({
     attachmentUrl: "",
     attachmentId: "",
@@ -35,6 +37,7 @@ const Diary = () => {
     mood: "",
     content: "",
     movies: [],
+    musics: [],
   });
   const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
   const [redirectToWrite, setRedirectToWrite] = useState<boolean>(false);
@@ -209,20 +212,34 @@ const Diary = () => {
             )}
           </div>
         )}
+
+        {diary.musics && diary.musics.length !== 0 && (
+          <section className="musics">
+            <h3> {`${todayOrTheDay}의 음악`}</h3>
+            <ul className="music-list">
+              {diary.musics.map((music: any, i: number) => (
+                <li key={i} className="music-item">
+                  <Image
+                    src={music["maniadb:album"].image["_cdata"]}
+                    alt={music.title["_cdata"]}
+                    width={500}
+                    height={500}
+                    objectFit="contain"
+                    layout="responsive"
+                  />
+                  <h5>{decodeHTMLEntities(music.title["_cdata"])}</h5>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <div className="main-content-wrapper">
           {diary.attachmentUrl && (
             <section className="image">
               <h3> {`${todayOrTheDay}의 사진`}</h3>
               <div className="image-wrapper">
-                <img
-                  src={diary.attachmentUrl}
-                  alt={"attachment"}
-                  // width={100}
-                  // height={100}
-                  // layout="responsive"
-                  // objectFit="contain"
-                  // priority
-                />
+                <img src={diary.attachmentUrl} alt={"attachment"} />
               </div>
             </section>
           )}
@@ -240,19 +257,17 @@ const Diary = () => {
               <ul className="movie-list">
                 {diary.movies.map((movie: any, i: number) => (
                   <li key={i} className="movie-item">
-                    {movie.image !== "" && (
-                      <Image
-                        src={
-                          "https://image.tmdb.org/t/p/original" +
-                          movie.poster_path
-                        }
-                        alt={movie.title}
-                        width={500}
-                        height={750}
-                        objectFit="contain"
-                        layout="responsive"
-                      />
-                    )}
+                    <Image
+                      src={
+                        "https://image.tmdb.org/t/p/original" +
+                        movie.poster_path
+                      }
+                      alt={movie.title}
+                      width={500}
+                      height={750}
+                      objectFit="contain"
+                      layout="responsive"
+                    />
                     <h5>{movie.title}</h5>
                   </li>
                 ))}
@@ -361,6 +376,70 @@ const Diary = () => {
               }
             }
 
+            .movies,
+            .musics {
+              width: 100%;
+
+              .movie-list,
+              .music-list {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 30px;
+                padding: {
+                  top: 5px;
+                  left: 15px;
+                  right: 15px;
+                  bottom: 20px;
+                }
+
+                &.music-list {
+                  justify-content: flex-start;
+                }
+
+                .movie-item,
+                .music-item {
+                  position: relative;
+                  border-radius: 5px;
+                  width: 30vw;
+                  min-width: 100px;
+                  display: inline;
+                  padding: 5px;
+                  box-shadow: 3px 3px 5px $gray-color;
+
+                  &.music-item {
+                    width: 15vw;
+                    min-width: 120px;
+                    h5 {
+                      bottom: 10px;
+                      font: {
+                        size: 14px;
+                      }
+                    }
+                  }
+
+                  h5 {
+                    position: absolute;
+                    bottom: 20px;
+                    left: 0;
+                    right: 0;
+                    width: fit-content;
+                    max-width: 90%;
+                    margin: auto;
+                    word-break: keep-all;
+                    text-align: center;
+                    background-color: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 15px;
+                    font: {
+                      weight: 700;
+                    }
+                  }
+                }
+              }
+            }
+
             .main-content-wrapper {
               display: flex;
               justify-content: flex-start;
@@ -392,52 +471,6 @@ const Diary = () => {
                 white-space: pre-line;
                 flex-grow: 1;
                 border: none;
-              }
-
-              .movies {
-                width: 100%;
-
-                .movie-list {
-                  display: flex;
-                  flex-wrap: wrap;
-                  justify-content: center;
-                  gap: 30px;
-                  padding: {
-                    top: 5px;
-                    left: 15px;
-                    right: 15px;
-                    bottom: 20px;
-                  }
-
-                  .movie-item {
-                    position: relative;
-                    border-radius: 5px;
-                    width: 30vw;
-                    min-width: 100px;
-                    display: inline;
-                    padding: 5px;
-                    box-shadow: 3px 3px 5px $gray-color;
-
-                    h5 {
-                      position: absolute;
-                      bottom: 20px;
-                      left: 0;
-                      right: 0;
-                      width: fit-content;
-                      max-width: 90%;
-                      margin: auto;
-                      word-break: keep-all;
-                      text-align: center;
-                      background-color: rgba(0, 0, 0, 0.8);
-                      color: white;
-                      padding: 5px 10px;
-                      border-radius: 15px;
-                      font: {
-                        weight: 700;
-                      }
-                    }
-                  }
-                }
               }
             }
           }

@@ -7,4 +7,5 @@ export interface DiaryType {
   mood: string;
   content: string;
   movies: Array<any>;
+  musics: Array<any>;
 }

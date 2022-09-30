@@ -10,15 +10,18 @@ import { getHoliThunk } from "../../redux/modules/setHoli";
 import Loading from "../../components/Loading";
 import Link from "next/link";
 import { DiaryType } from "../../type";
-import { storage } from "../../fb";
+import { auth, storage } from "../../fb";
 import { deleteObject, ref } from "firebase/storage";
 import classNames from "classnames";
 import Seo from "../../components/Seo";
 import Image from "next/image";
+import XMLJS from "xml-js";
+import useDecode from "../../hooks/useDecode";
 
 const Write = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const decodeHTMLEntities = useDecode();
   const attachmentInputRef = useRef<HTMLInputElement>(null);
   const movieSearchListRef = useRef<HTMLUListElement>(null);
   const movieSelectedListRef = useRef<HTMLUListElement>(null);
@@ -50,6 +53,11 @@ const Write = () => {
     onChange: onMovieKeywordChange,
   } = useInput("");
   const {
+    value: musicKeyword,
+    setValue: setMusicKeyword,
+    onChange: onMusicKeywordChange,
+  } = useInput("");
+  const {
     value: content,
     setValue: setContent,
     onChange: onContentChange,
@@ -75,6 +83,8 @@ const Write = () => {
   const [movieResult, setMovieResult] = useState<any>();
   const [selectedMovies, setSelectedMovies] = useState<Array<any>>([]);
   const [searching, setSearching] = useState<boolean>(false);
+  const [musicResult, setMusicResult] = useState<any>();
+  const [selectedMusics, setSelectedMusics] = useState<Array<any>>([]);
   const queryDate = router.query.date;
 
   // 쿼리로 받은 날짜를 상태에 저장
@@ -134,6 +144,7 @@ const Write = () => {
       setWeather(prev.weather);
       setContent(prev.content);
       setSelectedMovies(prev.movies ? prev.movies : []);
+      setSelectedMusics(prev.musics ? prev.musics : []);
       setInit(true);
       return;
     }
@@ -180,6 +191,7 @@ const Write = () => {
       mood,
       content,
       movies: selectedMovies,
+      musics: selectedMusics,
     };
 
     // 수정모드일 경우 기존 첨부사진 데이터 이어받음
@@ -299,7 +311,7 @@ const Write = () => {
       });
   };
 
-  // 검색 버튼 크릭
+  // 영화 검색 버튼 클릭
   const onSearchMovie = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (movieKeyword.length === 0) return;
@@ -317,6 +329,54 @@ const Write = () => {
       const prevMovies = [...prev];
       prevMovies.splice(i, 1);
       return prevMovies;
+    });
+  };
+
+  // 음악 검색
+  const getMusic = async () => {
+    setSearching(true);
+
+    if (!auth.currentUser) return;
+
+    const key = auth.currentUser.email;
+    const url = `api/music/${musicKeyword}/${key}`;
+
+    await fetch(url)
+      .then((response) => response.text())
+      .then((result) => {
+        const json = XMLJS.xml2json(result, { compact: true });
+        setMusicResult({
+          keyword: musicKeyword,
+          result: JSON.parse(json).rss.channel.item,
+        });
+        setSearching(false);
+      })
+      .catch((error) => {
+        window.alert(
+          "음악 검색에 실패하였습니다.\n잠시 후 다시 시도해 주세요."
+        );
+        setSearching(false);
+      });
+  };
+
+  // 음악 검색 버튼 클릭
+  const onSearchMusic = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (musicKeyword.length === 0) return;
+    getMusic();
+  };
+
+  // 영화 추가
+  const onAddMusic = (movie: any) => {
+    setSelectedMusics((prev) => [...prev, movie]);
+  };
+
+  // 영화 제거
+  const onRemoveMusic = (i: number) => {
+    setSelectedMusics((prev) => {
+      const prevMusics = [...prev];
+      prevMusics.splice(i, 1);
+      return prevMusics;
     });
   };
 
@@ -401,7 +461,88 @@ const Write = () => {
             </datalist>
           </div>
 
-          <div className="movie-wrapper">
+          <form className="music-wrapper" onSubmit={(e)=> {e.preventDefault()}}>
+            <div className="selected">
+              <h3>{todayOrTheDay}의 음악</h3>
+              <ul className="music-list">
+                {selectedMusics.length === 0 ? (
+                  <p className="empty">비어있음</p>
+                ) : (
+                  selectedMusics.map((music: any, i) => (
+                    <li
+                      key={i}
+                      className="music-item"
+                      onClick={() => {
+                        onRemoveMusic(i);
+                      }}
+                    >
+                      <Image
+                        src={music["maniadb:album"].image["_cdata"]}
+                        alt={music.title["_cdata"]}
+                        width={500}
+                        height={500}
+                        objectFit="contain"
+                        layout="responsive"
+                      />
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+
+            <div className="search">
+              <h4>음악 검색</h4>
+              <div className="input-wrapper">
+                <input
+                  className="music"
+                  list="music-list"
+                  type="text"
+                  value={musicKeyword}
+                  onChange={onMusicKeywordChange}
+                  placeholder={`제목`}
+                  size={15}
+                />
+                <Button onClick={onSearchMusic}>검색</Button>
+              </div>
+              {musicResult && (
+                <>
+                  <p>
+                    &quot;{musicResult.keyword}&quot; 검색 결과 (
+                    {musicResult.result.length}건, 최대 50건)
+                  </p>
+                  <ul className="music-list">
+                    {musicResult?.result?.map((music: any, i: number) => (
+                      <li
+                        key={i}
+                        className="music-item"
+                        onClick={() => {
+                          onAddMusic(music);
+                        }}
+                      >
+                        <Image
+                          src={music["maniadb:album"].image["_cdata"]}
+                          alt={music.title["_cdata"]}
+                          width={500}
+                          height={500}
+                          objectFit="contain"
+                          layout="responsive"
+                        />
+                        <h5>
+                          {decodeHTMLEntities(
+                            music["maniadb:artist"].name["_cdata"]
+                          ) +
+                            " - " +
+                            decodeHTMLEntities(music.title["_cdata"])}
+                        </h5>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          </form>
+
+          <form className="movie-wrapper" onSubmit={(e)=> {e.preventDefault()}}>
             <div className="selected">
               <h3>{todayOrTheDay} 본 영화</h3>
               <ul className="movie-list" ref={movieSelectedListRef}>
@@ -416,19 +557,17 @@ const Write = () => {
                         onRemoveMovie(i);
                       }}
                     >
-                      {movie.image !== "" && (
-                        <Image
-                          src={
-                            "https://image.tmdb.org/t/p/original" +
-                            movie.poster_path
-                          }
-                          alt={movie.title}
-                          width={500}
-                          height={750}
-                          objectFit="contain"
-                          layout="responsive"
-                        />
-                      )}
+                      <Image
+                        src={
+                          "https://image.tmdb.org/t/p/original" +
+                          movie.poster_path
+                        }
+                        alt={movie.title}
+                        width={500}
+                        height={750}
+                        objectFit="contain"
+                        layout="responsive"
+                      />
                     </li>
                   ))
                 )}
@@ -465,19 +604,17 @@ const Write = () => {
                             onAddMovie(movie);
                           }}
                         >
-                          {movie.image !== "" && (
-                            <Image
-                              src={
-                                "https://image.tmdb.org/t/p/w500" +
-                                movie.poster_path
-                              }
-                              alt={movie.title}
-                              width={500}
-                              height={750}
-                              objectFit="contain"
-                              layout="responsive"
-                            />
-                          )}
+                          <Image
+                            src={
+                              "https://image.tmdb.org/t/p/w500" +
+                              movie.poster_path
+                            }
+                            alt={movie.title}
+                            width={500}
+                            height={750}
+                            objectFit="contain"
+                            layout="responsive"
+                          />
                           <h5>{movie.title}</h5>
                         </li>
                       )
@@ -497,7 +634,7 @@ const Write = () => {
                 </div>
               )}
             </div>
-          </div>
+          </form>
 
           <textarea
             className="content"
@@ -606,7 +743,7 @@ const Write = () => {
             }
           }
 
-          form {
+          &>form {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -630,7 +767,8 @@ const Write = () => {
                 }
               }
 
-              .movie-wrapper {
+              .movie-wrapper,
+              .music-wrapper {
                 border: 1.5px solid $gray-color;
                 border-radius: 5px;
                 padding: 10px;
@@ -674,7 +812,8 @@ const Write = () => {
                   }
                 }
 
-                .movie-list {
+                .movie-list,
+                .music-list {
                   overflow-x: scroll;
                   display: flex;
                   flex-direction: column;
@@ -688,7 +827,12 @@ const Write = () => {
                     bottom: 20px;
                   }
 
-                  .movie-item {
+                  &.music-list {
+                    max-height: 500px;
+                  }
+
+                  .movie-item,
+                  .music-item {
                     position: relative;
                     cursor: pointer;
                     border-radius: 5px;
@@ -720,13 +864,15 @@ const Write = () => {
 
                 .selected {
                   position: relative;
-                  .movie-list {
+                  .movie-list,
+                  .music-list {
                     flex-direction: row;
                     flex-wrap: nowrap;
                     gap: 20px;
                     padding-bottom: 10px;
                     min-height: 125px;
-                    .movie-item {
+                    .movie-item,
+                    .music-item {
                       min-width: 80px !important;
                       max-width: 80px !important;
                     }
@@ -736,8 +882,6 @@ const Write = () => {
                 .search {
                   margin-top: 20px;
                   position: relative;
-                  .movie-list {
-                  }
                 }
 
                 .pagination {
@@ -762,7 +906,8 @@ const Write = () => {
                 &.weather,
                 &.mood,
                 &.direct,
-                &.movie {
+                &.movie,
+                &.music {
                   border-bottom: 1.5px solid $gray-color;
                   margin: 0px 5px;
                   padding-bottom: 3px;
