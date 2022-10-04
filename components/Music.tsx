@@ -94,9 +94,9 @@ const Music: React.FC<Props> = ({
   };
 
   return (
-    <div className="music-wrapper">
+    <details className="music-wrapper">
+      <summary>{todayOrTheDay}의 음악</summary>
       <div className="selected">
-        <h3>{todayOrTheDay}의 음악</h3>
         <ul className="music-list">
           {selectedMusics.length === 0 ? (
             <p className="empty">비어있음</p>
@@ -179,7 +179,7 @@ const Music: React.FC<Props> = ({
           </>
         )}
       </div>
-    </div>
+    </details>
   );
 };
 

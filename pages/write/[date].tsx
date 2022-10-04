@@ -461,9 +461,9 @@ const Write = () => {
                   margin-bottom: 20px;
                 }
 
-                h3 {
+                summary {
+                  cursor: pointer;
                   color: $gray-color;
-                  margin-bottom: 10px;
                   font: {
                     size: 20px;
                     weight: 700;

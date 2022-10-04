@@ -94,9 +94,9 @@ const Movie: React.FC<Props> = ({
   };
 
   return (
-    <div className="movie-wrapper">
+    <details className="movie-wrapper">
+      <summary>{todayOrTheDay} 본 영화</summary>
       <div className="selected">
-        <h3>{todayOrTheDay} 본 영화</h3>
         <ul className="movie-list" ref={movieSelectedListRef}>
           {selectedMovies.length === 0 ? (
             <p className="empty">비어있음</p>
@@ -186,7 +186,7 @@ const Movie: React.FC<Props> = ({
           </div>
         )}
       </div>
-    </div>
+    </details>
   );
 };
 
