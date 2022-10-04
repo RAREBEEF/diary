@@ -80,7 +80,6 @@ const Write = () => {
       typeof queryDate !== "string" ||
       !/^[12][09][0-9][0-9][01][0-9][0-3][0-9]$/.test(queryDate)
     ) {
-      console.log(queryDate);
       setRedirectToHome(true);
       return;
     }
@@ -334,8 +333,8 @@ const Write = () => {
 
           <Music
             todayOrTheDay={todayOrTheDay}
-            selectedMusics={selectedMovies}
-            setSelectedMusics={setSelectedMovies}
+            selectedMusics={selectedMusics}
+            setSelectedMusics={setSelectedMusics}
             setSearching={setSearching}
           />
 

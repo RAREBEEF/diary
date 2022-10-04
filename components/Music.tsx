@@ -37,9 +37,20 @@ const Music: React.FC<Props> = ({
       .then((response) => response.text())
       .then((result) => {
         const json = XMLJS.xml2json(result, { compact: true });
+        const items = JSON.parse(json).rss.channel.item;
+
+        if (!items) {
+          setMusicResult({
+            keyword: musicKeyword,
+            result: [],
+          });
+          setSearching(false);
+          return;
+        }
+
         setMusicResult({
           keyword: musicKeyword,
-          result: JSON.parse(json).rss.channel.item,
+          result: items?.length > 1 ? items : [items],
         });
         MusicSearchListRef.current?.scrollTo({
           left: 0,
@@ -69,8 +80,8 @@ const Music: React.FC<Props> = ({
   };
 
   // 음악 추가
-  const onAddMusic = (movie: any) => {
-    setSelectedMusics((prev) => [...prev, movie]);
+  const onAddMusic = (music: any) => {
+    setSelectedMusics((prev) => [...prev, music]);
   };
 
   // 음악 제거
