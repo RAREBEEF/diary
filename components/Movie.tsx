@@ -51,6 +51,12 @@ const Movie: React.FC<Props> = ({
             getMovie(movieKeyword, page - 1);
           },
         });
+
+        movieSearchListRef.current?.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+
         setSearching(false);
       })
       .catch((error) => {

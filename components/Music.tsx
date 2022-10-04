@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { auth } from "../fb";
 import useInput from "../hooks/useInput";
 import Button from "./Button";
@@ -20,6 +20,7 @@ const Music: React.FC<Props> = ({
   setSearching,
 }) => {
   const decodeHTMLEntities = useDecode();
+  const MusicSearchListRef = useRef<HTMLUListElement>(null);
   const [musicResult, setMusicResult] = useState<any>();
   const { value: musicKeyword, onChange: onMusicKeywordChange } = useInput("");
 
@@ -39,6 +40,10 @@ const Music: React.FC<Props> = ({
         setMusicResult({
           keyword: musicKeyword,
           result: JSON.parse(json).rss.channel.item,
+        });
+        MusicSearchListRef.current?.scrollTo({
+          left: 0,
+          behavior: "smooth",
         });
         setSearching(false);
       })
@@ -133,7 +138,7 @@ const Music: React.FC<Props> = ({
               &quot;{musicResult.keyword}&quot; 검색 결과 (
               {musicResult?.result?.length || "0"}건, 최대 50건)
             </p>
-            <ul className="music-list">
+            <ul className="music-list" ref={MusicSearchListRef}>
               {musicResult?.result?.map((music: any, i: number) => (
                 <li
                   key={i}
