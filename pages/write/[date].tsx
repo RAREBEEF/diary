@@ -10,21 +10,18 @@ import { getHoliThunk } from "../../redux/modules/setHoli";
 import Loading from "../../components/Loading";
 import Link from "next/link";
 import { DiaryType } from "../../type";
-import { auth, storage } from "../../fb";
+import { storage } from "../../fb";
 import { deleteObject, ref } from "firebase/storage";
 import classNames from "classnames";
 import Seo from "../../components/Seo";
-import Image from "next/image";
-import XMLJS from "xml-js";
-import useDecode from "../../hooks/useDecode";
+import Movie from "../../components/Movie";
+import Music from "../../components/Music";
+import HeaderNav from "../../components/HeaderNav";
 
 const Write = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const decodeHTMLEntities = useDecode();
   const attachmentInputRef = useRef<HTMLInputElement>(null);
-  const movieSearchListRef = useRef<HTMLUListElement>(null);
-  const movieSelectedListRef = useRef<HTMLUListElement>(null);
   const {
     loginData: {
       userData: { uid },
@@ -46,16 +43,6 @@ const Write = () => {
     value: mood,
     setValue: setMood,
     onChange: onMoodChange,
-  } = useInput("");
-  const {
-    value: movieKeyword,
-    setValue: setMovieKeyword,
-    onChange: onMovieKeywordChange,
-  } = useInput("");
-  const {
-    value: musicKeyword,
-    setValue: setMusicKeyword,
-    onChange: onMusicKeywordChange,
   } = useInput("");
   const {
     value: content,
@@ -80,10 +67,8 @@ const Write = () => {
     date: "",
   });
   const [todayOrTheDay, setTodayOrTheDay] = useState<"오늘" | "그 날">("오늘");
-  const [movieResult, setMovieResult] = useState<any>();
   const [selectedMovies, setSelectedMovies] = useState<Array<any>>([]);
   const [searching, setSearching] = useState<boolean>(false);
-  const [musicResult, setMusicResult] = useState<any>();
   const [selectedMusics, setSelectedMusics] = useState<Array<any>>([]);
   const queryDate = router.query.date;
 
@@ -95,6 +80,7 @@ const Write = () => {
       typeof queryDate !== "string" ||
       !/^[12][09][0-9][0-9][01][0-9][0-3][0-9]$/.test(queryDate)
     ) {
+      console.log(queryDate);
       setRedirectToHome(true);
       return;
     }
@@ -270,134 +256,19 @@ const Write = () => {
     }
   }, [queryDate, redirectToDiary, redirectToHome, redirectToLogin, router]);
 
-  /**
-   * 영화 검색
-   */
-  const getMovie = async (keyword: string = movieKeyword, page: number = 1) => {
-    setSearching(true);
-
-    const url = `api/movie/${keyword}/${page}`;
-
-    await fetch(url)
-      .then((response) => response.json())
-      .then((result) => {
-        setMovieResult({
-          keyword,
-          result,
-          getNextMovie: (e: React.MouseEvent<HTMLButtonElement>) => {
-            e.preventDefault();
-            movieSearchListRef.current?.scrollTo({
-              left: 0,
-              behavior: "smooth",
-            });
-            getMovie(movieKeyword, page + 1);
-          },
-          getPrevMovie: (e: React.MouseEvent<HTMLButtonElement>) => {
-            e.preventDefault();
-            movieSearchListRef.current?.scrollTo({
-              left: 0,
-              behavior: "smooth",
-            });
-            getMovie(movieKeyword, page - 1);
-          },
-        });
-        setSearching(false);
-      })
-      .catch((error) => {
-        window.alert(
-          "영화 검색에 실패하였습니다.\n잠시 후 다시 시도해 주세요."
-        );
-        setSearching(false);
-      });
-  };
-
-  // 영화 검색 버튼 클릭
-  const onSearchMovie = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (movieKeyword.length === 0) return;
-    getMovie();
-  };
-
-  // 영화 추가
-  const onAddMovie = (movie: any) => {
-    setSelectedMovies((prev) => [...prev, movie]);
-  };
-
-  // 영화 제거
-  const onRemoveMovie = (i: number) => {
-    setSelectedMovies((prev) => {
-      const prevMovies = [...prev];
-      prevMovies.splice(i, 1);
-      return prevMovies;
-    });
-  };
-
-  // 음악 검색
-  const getMusic = async () => {
-    setSearching(true);
-
-    if (!auth.currentUser) return;
-
-    const key = auth.currentUser.email;
-    const url = `api/music/${musicKeyword}/${key}`;
-
-    await fetch(url)
-      .then((response) => response.text())
-      .then((result) => {
-        const json = XMLJS.xml2json(result, { compact: true });
-        setMusicResult({
-          keyword: musicKeyword,
-          result: JSON.parse(json).rss.channel.item,
-        });
-        setSearching(false);
-      })
-      .catch((error) => {
-        window.alert(
-          "음악 검색에 실패하였습니다.\n잠시 후 다시 시도해 주세요."
-        );
-        setSearching(false);
-      });
-  };
-
-  // 음악 검색 버튼 클릭
-  const onSearchMusic = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (musicKeyword.length === 0) return;
-    getMusic();
-  };
-
-  // 영화 추가
-  const onAddMusic = (movie: any) => {
-    setSelectedMusics((prev) => [...prev, movie]);
-  };
-
-  // 영화 제거
-  const onRemoveMusic = (i: number) => {
-    setSelectedMusics((prev) => {
-      const prevMusics = [...prev];
-      prevMusics.splice(i, 1);
-      return prevMusics;
-    });
-  };
-
   return init ? (
     <section className="page-container">
       <Seo
         title={`일기장 | ${todayOrTheDay === "오늘" ? "오늘" : queryDate}`}
       />
       <Loading isShow={loading || searching} text="로딩 중" />
-      <nav>
-        <Link href={editMode ? `/diary/${queryDate}` : "/"}>
-          <a>
-            {"< "}
-            {editMode ? "돌아가기" : "홈으로"}
-          </a>
-        </Link>
-        <hgroup>
-          <h2>{`${year} / ${month} / ${date}`}</h2>
-          <h1>{`${todayOrTheDay}`}의 일기</h1>
-        </hgroup>
-      </nav>
+
+      <HeaderNav
+        backTo={editMode ? `/diary/${queryDate}` : "/"}
+        backToText={editMode ? "돌아가기" : "홈으로"}
+        title={`${todayOrTheDay}의 일기`}
+        subTitle={`${year} / ${month} / ${date}`}
+      />
 
       <form onSubmit={onSubmit}>
         <div className="input-wrapper">
@@ -461,180 +332,19 @@ const Write = () => {
             </datalist>
           </div>
 
-          <form className="music-wrapper" onSubmit={(e)=> {e.preventDefault()}}>
-            <div className="selected">
-              <h3>{todayOrTheDay}의 음악</h3>
-              <ul className="music-list">
-                {selectedMusics.length === 0 ? (
-                  <p className="empty">비어있음</p>
-                ) : (
-                  selectedMusics.map((music: any, i) => (
-                    <li
-                      key={i}
-                      className="music-item"
-                      onClick={() => {
-                        onRemoveMusic(i);
-                      }}
-                    >
-                      <Image
-                        src={music["maniadb:album"].image["_cdata"]}
-                        alt={music.title["_cdata"]}
-                        width={500}
-                        height={500}
-                        objectFit="contain"
-                        layout="responsive"
-                      />
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
+          <Music
+            todayOrTheDay={todayOrTheDay}
+            selectedMusics={selectedMovies}
+            setSelectedMusics={setSelectedMovies}
+            setSearching={setSearching}
+          />
 
-            <div className="search">
-              <h4>음악 검색</h4>
-              <div className="input-wrapper">
-                <input
-                  className="music"
-                  list="music-list"
-                  type="text"
-                  value={musicKeyword}
-                  onChange={onMusicKeywordChange}
-                  placeholder={`제목`}
-                  size={15}
-                />
-                <Button onClick={onSearchMusic}>검색</Button>
-              </div>
-              {musicResult && (
-                <>
-                  <p>
-                    &quot;{musicResult.keyword}&quot; 검색 결과 (
-                    {musicResult.result.length}건, 최대 50건)
-                  </p>
-                  <ul className="music-list">
-                    {musicResult?.result?.map((music: any, i: number) => (
-                      <li
-                        key={i}
-                        className="music-item"
-                        onClick={() => {
-                          onAddMusic(music);
-                        }}
-                      >
-                        <Image
-                          src={music["maniadb:album"].image["_cdata"]}
-                          alt={music.title["_cdata"]}
-                          width={500}
-                          height={500}
-                          objectFit="contain"
-                          layout="responsive"
-                        />
-                        <h5>
-                          {decodeHTMLEntities(
-                            music["maniadb:artist"].name["_cdata"]
-                          ) +
-                            " - " +
-                            decodeHTMLEntities(music.title["_cdata"])}
-                        </h5>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
-          </form>
-
-          <form className="movie-wrapper" onSubmit={(e)=> {e.preventDefault()}}>
-            <div className="selected">
-              <h3>{todayOrTheDay} 본 영화</h3>
-              <ul className="movie-list" ref={movieSelectedListRef}>
-                {selectedMovies.length === 0 ? (
-                  <p className="empty">비어있음</p>
-                ) : (
-                  selectedMovies.map((movie: any, i) => (
-                    <li
-                      key={i}
-                      className="movie-item"
-                      onClick={() => {
-                        onRemoveMovie(i);
-                      }}
-                    >
-                      <Image
-                        src={
-                          "https://image.tmdb.org/t/p/original" +
-                          movie.poster_path
-                        }
-                        alt={movie.title}
-                        width={500}
-                        height={750}
-                        objectFit="contain"
-                        layout="responsive"
-                      />
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
-
-            <div className="search">
-              <h4>영화 검색</h4>
-              <div className="input-wrapper">
-                <input
-                  className="movie"
-                  list="movie-list"
-                  type="text"
-                  value={movieKeyword}
-                  onChange={onMovieKeywordChange}
-                  placeholder={`제목`}
-                  size={15}
-                />
-                <Button onClick={onSearchMovie}>검색</Button>
-              </div>
-              {movieResult && (
-                <>
-                  <p>
-                    &quot;{movieResult.keyword}&quot; 검색 결과 (
-                    {movieResult.result.total_results}건)
-                  </p>
-                  <ul className="movie-list" ref={movieSearchListRef}>
-                    {movieResult?.result?.results?.map(
-                      (movie: any, i: number) => (
-                        <li
-                          key={i}
-                          className="movie-item"
-                          onClick={() => {
-                            onAddMovie(movie);
-                          }}
-                        >
-                          <Image
-                            src={
-                              "https://image.tmdb.org/t/p/w500" +
-                              movie.poster_path
-                            }
-                            alt={movie.title}
-                            width={500}
-                            height={750}
-                            objectFit="contain"
-                            layout="responsive"
-                          />
-                          <h5>{movie.title}</h5>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </>
-              )}
-              {movieResult && movieResult.result.total_pages !== 0 && (
-                <div className="pagination">
-                  {movieResult.result.page !== 1 && (
-                    <Button onClick={movieResult.getPrevMovie}>이전</Button>
-                  )}
-                  {movieResult.result.page !== movieResult.result.total_pages &&
-                    movieResult.result.total_pages !== 0 && (
-                      <Button onClick={movieResult.getNextMovie}>다음</Button>
-                    )}
-                </div>
-              )}
-            </div>
-          </form>
+          <Movie
+            todayOrTheDay={todayOrTheDay}
+            selectedMovies={selectedMovies}
+            setSelectedMovies={setSelectedMovies}
+            setSearching={setSearching}
+          />
 
           <textarea
             className="content"
@@ -697,7 +407,7 @@ const Write = () => {
         </section>
       </form>
 
-      <style jsx>{`
+      <style jsx global>{`
         @import "../../styles/var.scss";
 
         .page-container {
@@ -708,42 +418,13 @@ const Write = () => {
             right: 50px;
           }
 
-          nav,
           form {
             width: 100%;
             max-width: 1000px;
             margin: auto;
           }
 
-          nav {
-            word-break: keep-all;
-            padding: {
-              top: 50px;
-              bottom: 30px;
-            }
-
-            hgroup {
-              width: fit-content;
-              color: $gray-color;
-              margin-top: 20px;
-
-              h1 {
-                width: fit-content;
-                font: {
-                  size: 30px;
-                  weight: 700;
-                }
-              }
-
-              h2 {
-                margin: {
-                  left: 2.5px;
-                }
-              }
-            }
-          }
-
-          &>form {
+          & > form {
             flex-grow: 1;
             display: flex;
             flex-direction: column;

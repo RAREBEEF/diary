@@ -13,6 +13,7 @@ import { diaryInitialization } from "../redux/modules/setDiaries";
 import { login, loginDataStateType } from "../redux/modules/setLogin";
 import { reduxStateType } from "../redux/store";
 import Seo from "../components/Seo";
+import HeaderNav from "../components/HeaderNav";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -166,17 +167,12 @@ const Profile = () => {
     <section className="page-container">
       <Seo title="일기장 | 프로필" />
       <div>
-        <nav>
-          <div className="btn-wrapper">
-            <Link href="/">
-              <a>{"< "}홈으로</a>
-            </Link>
-          </div>
-          <hgroup>
-            <h2>{displayName}</h2>
-            <h1>프로필 설정</h1>
-          </hgroup>
-        </nav>
+        <HeaderNav
+          backTo="/"
+          backToText="홈으로"
+          title="프로필 설정"
+          subTitle={displayName}
+        />
 
         <section className="contents">
           <div className="displayName">
@@ -220,7 +216,7 @@ const Profile = () => {
         </section>
       </div>
       <Footer />
-      <style jsx>{`
+      <style jsx global>{`
         @import "../styles/var.scss";
 
         .page-container {
@@ -234,39 +230,13 @@ const Profile = () => {
             }
           }
 
-          nav,
+          nav {
+            padding-bottom: 50px;
+          }
+
           .contents {
             width: 100%;
             margin: auto;
-          }
-
-          nav {
-            max-width: 1000px;
-            word-break: keep-all;
-            padding: {
-              top: 50px;
-              bottom: 50px;
-            }
-
-            hgroup {
-              width: fit-content;
-              color: $gray-color;
-              margin-top: 20px;
-
-              h1 {
-                width: fit-content;
-                font: {
-                  size: 30px;
-                  weight: 700;
-                }
-              }
-
-              h2 {
-                margin: {
-                  left: 2.5px;
-                }
-              }
-            }
           }
 
           .contents {

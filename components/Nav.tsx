@@ -34,19 +34,34 @@ const Nav = () => {
         }}
       >
         <a className="hover-brighter">
-          <Image src="/icons/write-solid.svg" width={20} height={20} alt="Nav" />
+          <Image
+            src="/icons/write-solid.svg"
+            width={20}
+            height={20}
+            alt="Nav"
+          />
           <h4>Today</h4>
         </a>
       </Link>
       <Link href={isLoggedIn ? "/profile" : "/login"}>
         {isLoggedIn ? (
           <a className="hover-brighter">
-            <Image src="/icons/profile-solid.svg" width={20} height={20} alt="Nav" />
+            <Image
+              src="/icons/profile-solid.svg"
+              width={20}
+              height={20}
+              alt="Nav"
+            />
             <h4>Profile</h4>
           </a>
         ) : (
           <a className="hover-brighter">
-            <Image src="/icons/login-solid.svg" width={20} height={20} alt="Nav" />
+            <Image
+              src="/icons/login-solid.svg"
+              width={20}
+              height={20}
+              alt="Nav"
+            />
             <h4>Login</h4>
           </a>
         )}

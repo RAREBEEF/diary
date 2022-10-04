@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import Button from "../../components/Button";
+import HeaderNav from "../../components/HeaderNav";
 import Seo from "../../components/Seo";
 import useDecode from "../../hooks/useDecode";
 import {
@@ -171,30 +172,28 @@ const Diary = () => {
       <Seo
         title={`일기장 | ${todayOrTheDay === "오늘" ? "오늘" : queryDate}`}
       />
-      <nav>
-        <div className="btn-wrapper">
-          <Link href="/">
-            <a>{"< "}홈으로</a>
-          </Link>
-          <section className="tool-bar">
-            <Button style={{ border: "none", padding: "0" }}>
-              <Link href={`/write/${queryDate}`}>
-                <a>수정</a>
-              </Link>
-            </Button>
-            <Button
-              onClick={onDeleteClick}
-              style={{ border: "none", padding: "0" }}
-            >
-              삭제
-            </Button>
-          </section>
-        </div>
-        <hgroup>
-          <h2>{`${year} / ${month} / ${date}`}</h2>
-          <h1>{diary.title}</h1>
-        </hgroup>
-      </nav>
+
+      <HeaderNav
+        backTo="/"
+        backToText="홈으로"
+        title={diary.title}
+        subTitle={`${year} / ${month} / ${date}`}
+      >
+        <section className="tool-bar">
+          <Button style={{ border: "none", padding: "0" }}>
+            <Link href={`/write/${queryDate}`}>
+              <a>수정</a>
+            </Link>
+          </Button>
+          <Button
+            onClick={onDeleteClick}
+            style={{ border: "none", padding: "0" }}
+          >
+            삭제
+          </Button>
+        </section>
+      </HeaderNav>
+
       <section className="contents">
         {(diary.weather || diary.mood) && (
           <div className="etc-content-wrapper">
@@ -277,7 +276,7 @@ const Diary = () => {
         </div>
       </section>
 
-      <style jsx>{`
+      <style jsx global>{`
         @import "../../styles/var.scss";
 
         .page-container {
@@ -288,49 +287,19 @@ const Diary = () => {
             right: 50px;
           }
 
-          nav,
+          nav {
+            .tool-bar {
+              flex-grow: 1;
+              display: flex;
+              justify-content: flex-end;
+              gap: 10px;
+            }
+          }
+
           .contents {
             width: 100%;
             max-width: 1000px;
             margin: auto;
-          }
-
-          nav {
-            word-break: keep-all;
-            padding: {
-              top: 50px;
-              bottom: 30px;
-            }
-
-            .btn-wrapper {
-              display: flex;
-              .tool-bar {
-                flex-grow: 1;
-                display: flex;
-                justify-content: flex-end;
-                gap: 10px;
-              }
-            }
-
-            hgroup {
-              width: fit-content;
-              color: $gray-color;
-              margin-top: 20px;
-
-              h1 {
-                width: fit-content;
-                font: {
-                  size: 30px;
-                  weight: 700;
-                }
-              }
-
-              h2 {
-                margin: {
-                  left: 2.5px;
-                }
-              }
-            }
           }
 
           .contents {

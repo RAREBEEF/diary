@@ -39,7 +39,10 @@ const Layout: React.FC<Props> = ({ children }) => {
             now.getMonth() < 9
               ? "0" + (now.getMonth() + 1)
               : (now.getMonth() + 1).toString(),
-          date: now.getDate().toString(),
+          date:
+            now.getDate() < 9
+              ? "0" + (now.getDate() + 1)
+              : (now.getDate() + 1).toString(),
         })
       );
 
