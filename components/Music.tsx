@@ -51,10 +51,16 @@ const Music: React.FC<Props> = ({
   };
 
   // 음악 검색 버튼 클릭
-  const onSearchMusic = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const onSearchMusic = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault();
     if (musicKeyword.length === 0) return;
     getMusic();
+  };
+
+  // 엔터 입력
+  const onPressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const key = e.key || e.keyCode;
+    (key === "Enter" || key === 13) && onSearchMusic();
   };
 
   // 음악 추가
@@ -72,12 +78,7 @@ const Music: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className="music-wrapper"
-      onSubmit={(e) => {
-        e.preventDefault();
-      }}
-    >
+    <div className="music-wrapper">
       <div className="selected">
         <h3>{todayOrTheDay}의 음악</h3>
         <ul className="music-list">
@@ -122,6 +123,7 @@ const Music: React.FC<Props> = ({
             onChange={onMusicKeywordChange}
             placeholder={`제목`}
             size={15}
+            onKeyDown={onPressEnter}
           />
           <Button onClick={onSearchMusic}>검색</Button>
         </div>
@@ -129,7 +131,7 @@ const Music: React.FC<Props> = ({
           <>
             <p>
               &quot;{musicResult.keyword}&quot; 검색 결과 (
-              {musicResult.result.length}건, 최대 50건)
+              {musicResult?.result?.length || "0"}건, 최대 50건)
             </p>
             <ul className="music-list">
               {musicResult?.result?.map((music: any, i: number) => (

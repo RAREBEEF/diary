@@ -62,10 +62,15 @@ const Movie: React.FC<Props> = ({
   };
 
   // 영화 검색 버튼 클릭
-  const onSearchMovie = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const onSearchMovie = () => {
     if (movieKeyword.length === 0) return;
     getMovie();
+  };
+
+  // 엔터 입력
+  const onPressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const key = e.key || e.keyCode;
+    (key === "Enter" || key === 13) && onSearchMovie();
   };
 
   // 영화 추가
@@ -83,12 +88,7 @@ const Movie: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className="movie-wrapper"
-      onSubmit={(e) => {
-        e.preventDefault();
-      }}
-    >
+    <div className="movie-wrapper">
       <div className="selected">
         <h3>{todayOrTheDay} 본 영화</h3>
         <ul className="movie-list" ref={movieSelectedListRef}>
@@ -135,6 +135,7 @@ const Movie: React.FC<Props> = ({
             onChange={onMovieKeywordChange}
             placeholder={`제목`}
             size={15}
+            onKeyDown={onPressEnter}
           />
           <Button onClick={onSearchMovie}>검색</Button>
         </div>
