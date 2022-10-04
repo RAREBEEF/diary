@@ -549,8 +549,9 @@ const Write = () => {
                     flex-direction: row;
                     flex-wrap: nowrap;
                     gap: 20px;
-                    padding-bottom: 10px;
                     min-height: 125px;
+                    padding-bottom: 10px;
+                    margin-top: 10px;
                     .movie-item,
                     .music-item {
                       min-width: 80px !important;
