@@ -24,7 +24,12 @@ const Nav = () => {
     <nav /* onClick={onContainerClick} */>
       <Link href="/">
         <a className="hover-brighter">
-          <Image src="/icons/home-solid.svg" width={20} height={20} alt="Nav" />
+          <Image
+            src="/icons/home-solid.svg"
+            width={20}
+            height={20}
+            alt="Home"
+          />
           <h4>Home</h4>
         </a>
       </Link>
@@ -38,9 +43,20 @@ const Nav = () => {
             src="/icons/write-solid.svg"
             width={20}
             height={20}
-            alt="Nav"
+            alt="Today"
           />
           <h4>Today</h4>
+        </a>
+      </Link>
+      <Link href="/tags">
+        <a className="hover-brighter">
+          <Image
+            src="/icons/hash-solid.svg"
+            width={20}
+            height={20}
+            alt="Tags"
+          />
+          <h4>Tags</h4>
         </a>
       </Link>
       <Link href={isLoggedIn ? "/profile" : "/login"}>
@@ -50,7 +66,7 @@ const Nav = () => {
               src="/icons/profile-solid.svg"
               width={20}
               height={20}
-              alt="Nav"
+              alt="Profile"
             />
             <h4>Profile</h4>
           </a>
@@ -60,7 +76,7 @@ const Nav = () => {
               src="/icons/login-solid.svg"
               width={20}
               height={20}
-              alt="Nav"
+              alt="Login"
             />
             <h4>Login</h4>
           </a>

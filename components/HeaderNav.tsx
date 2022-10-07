@@ -1,29 +1,20 @@
-import Link from "next/link";
-import { Children, ReactNode } from "react";
+import { useRouter } from "next/router";
+import { ReactNode } from "react";
+import Button from "./Button";
 
 interface Props {
-  backTo: string;
-  backToText: string;
   title: string;
   subTitle: string;
   children?: ReactNode;
 }
 
-const HeaderNav: React.FC<Props> = ({
-  backTo,
-  backToText,
-  title,
-  subTitle,
-  children,
-}) => {
+const HeaderNav: React.FC<Props> = ({ title, subTitle, children }) => {
+  const router = useRouter();
   return (
     <nav>
-      <Link href={backTo}>
-        <a>
-          {"< "}
-          {backToText}
-        </a>
-      </Link>
+      <Button onClick={router.back} style={{ border: "none" }}>
+        <a>{"< 돌아가기"}</a>
+      </Button>
       {children}
       <hgroup>
         <h2>{subTitle}</h2>

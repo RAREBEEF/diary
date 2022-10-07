@@ -8,4 +8,5 @@ export interface DiaryType {
   content: string;
   movies: Array<any>;
   musics: Array<any>;
+  tags: Array<string>;
 }

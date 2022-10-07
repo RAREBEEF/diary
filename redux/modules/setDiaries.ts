@@ -1,11 +1,15 @@
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import {
   deleteObject,
@@ -27,6 +31,7 @@ export interface DiariesDataStateType {
    * 기간별 일기 목록 데이터
    * */
   periodData: Array<DiaryType>;
+  tags: any;
   /**
    * 기간별 일기 목록의 현재 페이지
    * */
@@ -55,6 +60,9 @@ export const PERIOD_INITIALIZATION = "PERIOD_INITIALIZATION";
 export const GET_PERIOD_START = "GET_PERIOD_START";
 export const GET_PERIOD_SUCCESS = "GET_PERIOD_SUCCESS";
 export const GET_PERIOD_FAIL = "GET_PERIOD_FAIL";
+export const GET_TAGS_START = "GET_TAGS_START";
+export const GET_TAGS_SUCCESS = "GET_TAGS_SUCCESS";
+export const GET_TAGS_FAIL = "GET_TAGS_FAIL";
 export const SET_PERIOD_PAGE = "SET_PERIOD_PAGE";
 export const SET_LATEST_TAB = "SET_LATEST_TAB";
 
@@ -167,6 +175,25 @@ export const getPeriodFail = (error: any) => {
     error,
   };
 };
+export const getTagsStart = () => {
+  return {
+    type: GET_TAGS_START,
+  };
+};
+
+export const getTagsSuccess = (tagData: Array<any>) => {
+  return {
+    type: GET_TAGS_SUCCESS,
+    tagData,
+  };
+};
+
+export const getTagsFail = (error: any) => {
+  return {
+    type: GET_TAGS_FAIL,
+    error,
+  };
+};
 
 export const setPeriodPage = (periodPage: number) => {
   return {
@@ -183,6 +210,7 @@ export const setLatestTab = (latestTab: number) => {
 
 export const setDiaryThunk = (
   diaryData: DiaryType,
+  prevDiary: DiaryType | null,
   attachment: File | null,
   uid: string,
   year: string,
@@ -206,6 +234,46 @@ export const setDiaryThunk = (
         diaryData.attachmentUrl = await getDownloadURL(storageRef);
       }
 
+      // 태그가 존재할 경우
+      if (diaryData.tags?.length !== 0) {
+        diaryData.tags.forEach(async (tag) => {
+          const newTags: any = {};
+          newTags[tag] = arrayUnion(`${year}${month}${date}`);
+
+          await updateDoc(doc(db, uid, "tags"), newTags).catch(
+            async (error) => {
+              switch (error.code) {
+                // "tags" 컬렉션이 없는 경우 추가
+                case "not-found":
+                  await setDoc(doc(db, uid, "tags"), newTags);
+                default:
+                  break;
+              }
+            }
+          );
+        });
+      }
+
+      // 이전 태그 삭제
+      if (
+        prevDiary &&
+        prevDiary.tags &&
+        prevDiary.tags.length !== 0 &&
+        prevDiary.tags !== diaryData.tags
+      ) {
+        // 차집합 구하기
+        const deleteList: Array<any> | undefined = prevDiary?.tags.filter(
+          (tag) => !diaryData.tags.includes(tag)
+        );
+
+        deleteList?.forEach(async (tag) => {
+          const newTags: any = {};
+          newTags[tag] = arrayRemove(`${year}${month}${date}`);
+
+          await updateDoc(doc(db, uid, "tags"), newTags);
+        });
+      }
+
       // 업로드
       await setDoc(doc(db, uid, year, month, date), diaryData);
       dispatch(setDiarySuccess(year, month, date, diaryData));
@@ -222,6 +290,7 @@ export const setDiaryThunk = (
 
 export const deleteDiaryThunk = (
   attachmentId: string,
+  tags: Array<string>,
   uid: string,
   year: string,
   month: string,
@@ -231,9 +300,20 @@ export const deleteDiaryThunk = (
     try {
       dispatch(deleteDiaryStart());
 
+      // 첨부파일이 존재할 경우
       if (attachmentId) {
         const storageRef = ref(storage, `${uid}/${attachmentId}`);
         await deleteObject(storageRef);
+      }
+
+      // 태그가 존재할 경우
+      if (tags.length !== 0) {
+        tags.forEach(async (tag) => {
+          const newTags: any = {};
+          newTags[tag] = arrayRemove(`${year}${month}${date}`);
+
+          await updateDoc(doc(db, uid, "tags"), newTags);
+        });
       }
 
       deleteDoc(doc(db, uid, year, month, date));
@@ -307,6 +387,39 @@ export const getPeriodDiariesThunk = (
       dispatch(getPeriodSuccess(periodData));
     } catch (error) {
       dispatch(getPeriodFail(error));
+    }
+  };
+};
+
+export const getTagsThunk = (uid: string) => {
+  return async (dispatch: React.Dispatch<any>) => {
+    try {
+      dispatch(getTagsStart());
+
+      if (!window.navigator.onLine) {
+        throw "Lost internet connection";
+      }
+
+      let tagData: any = {};
+      await getDocs(collection(db, uid)).then((docSnap) => {
+        if (docSnap.empty) {
+          return;
+        } else {
+          docSnap.forEach((doc) => {
+            const tagsObj = doc.data();
+            const exist = Object.keys(tagsObj).filter(
+              (tag) => tagsObj[tag].length !== 0
+            );
+            exist.forEach((tag) => {
+              tagData[tag] = tagsObj[tag];
+            });
+          });
+        }
+      });
+
+      dispatch(getTagsSuccess(tagData));
+    } catch (error) {
+      dispatch(getTagsFail(error));
     }
   };
 };
@@ -422,6 +535,7 @@ const reducer = (prev = initialState, action: any) => {
         ...prev,
         data: {},
         periodData: [],
+        tags: [],
         loading: false,
         error: null,
       };
@@ -458,12 +572,35 @@ const reducer = (prev = initialState, action: any) => {
       };
     }
 
+    case GET_TAGS_START: {
+      return { ...prev, loading: true, error: null };
+    }
+
+    case GET_TAGS_SUCCESS: {
+      return {
+        ...prev,
+        loading: false,
+        error: null,
+        tags: action.tagData,
+      };
+    }
+
+    case GET_TAGS_FAIL: {
+      return {
+        ...prev,
+        loading: false,
+        error: action.error,
+        tags: [],
+      };
+    }
+
     case SET_PERIOD_PAGE: {
       return {
         ...prev,
         periodPage: action.periodPage,
       };
     }
+
     case SET_LATEST_TAB: {
       return {
         ...prev,
@@ -483,6 +620,7 @@ const initialState = {
   error: null,
   latestTab: 0,
   periodPage: 0,
+  tags: [],
 };
 
 export default reducer;

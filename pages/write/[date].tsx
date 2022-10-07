@@ -17,6 +17,7 @@ import Seo from "../../components/Seo";
 import Movie from "../../components/Movie";
 import Music from "../../components/Music";
 import HeaderNav from "../../components/HeaderNav";
+import Tag from "../../components/Tag";
 
 const Write = () => {
   const dispatch = useDispatch();
@@ -68,8 +69,9 @@ const Write = () => {
   });
   const [todayOrTheDay, setTodayOrTheDay] = useState<"오늘" | "그 날">("오늘");
   const [selectedMovies, setSelectedMovies] = useState<Array<any>>([]);
-  const [searching, setSearching] = useState<boolean>(false);
   const [selectedMusics, setSelectedMusics] = useState<Array<any>>([]);
+  const [tags, setTags] = useState<Array<any>>([]);
+  const [searching, setSearching] = useState<boolean>(false);
   const queryDate = router.query.date;
 
   // 쿼리로 받은 날짜를 상태에 저장
@@ -130,6 +132,7 @@ const Write = () => {
       setContent(prev.content);
       setSelectedMovies(prev.movies ? prev.movies : []);
       setSelectedMusics(prev.musics ? prev.musics : []);
+      setTags(prev.tags ? prev.tags : []);
       setInit(true);
       return;
     }
@@ -177,6 +180,7 @@ const Write = () => {
       content,
       movies: selectedMovies,
       musics: selectedMusics,
+      tags,
     };
 
     // 수정모드일 경우 기존 첨부사진 데이터 이어받음
@@ -194,6 +198,7 @@ const Write = () => {
     dispatch<any>(
       setDiaryThunk(
         diaryData,
+        prevDiary,
         attachment,
         uid,
         year,
@@ -263,8 +268,6 @@ const Write = () => {
       <Loading isShow={loading || searching} text="로딩 중" />
 
       <HeaderNav
-        backTo={editMode ? `/diary/${queryDate}` : "/"}
-        backToText={editMode ? "돌아가기" : "홈으로"}
         title={`${todayOrTheDay}의 일기`}
         subTitle={`${year} / ${month} / ${date}`}
       />
@@ -330,6 +333,8 @@ const Write = () => {
               <option value="피곤 🥱">피곤 🥱</option>
             </datalist>
           </div>
+
+          <Tag todayOrTheDay={todayOrTheDay} tags={tags} setTags={setTags} />
 
           <Music
             todayOrTheDay={todayOrTheDay}
@@ -448,7 +453,8 @@ const Write = () => {
               }
 
               .movie-wrapper,
-              .music-wrapper {
+              .music-wrapper,
+              .tag-wrapper {
                 border: 1.5px solid $gray-color;
                 border-radius: 5px;
                 padding: 10px;
@@ -493,7 +499,8 @@ const Write = () => {
                 }
 
                 .movie-list,
-                .music-list {
+                .music-list,
+                .tag-list {
                   overflow-x: scroll;
                   display: flex;
                   flex-direction: column;
@@ -512,7 +519,8 @@ const Write = () => {
                   }
 
                   .movie-item,
-                  .music-item {
+                  .music-item,
+                  .tag-item {
                     position: relative;
                     cursor: pointer;
                     border-radius: 5px;
@@ -520,6 +528,19 @@ const Write = () => {
                     display: inline;
                     padding: 5px;
                     box-shadow: 3px 3px 5px $gray-color;
+
+                    &.tag-item {
+                      min-width: auto;
+                      padding: 5px 10px;
+                      color: $gray-color;
+                      font: {
+                        weight: 700;
+                      }
+                      .hash {
+                        color: darkgray;
+                        margin-right: 2px;
+                      }
+                    }
 
                     h5 {
                       position: absolute;
@@ -545,13 +566,24 @@ const Write = () => {
                 .selected {
                   position: relative;
                   .movie-list,
-                  .music-list {
+                  .music-list,
+                  .tag-list {
                     flex-direction: row;
                     flex-wrap: nowrap;
                     gap: 20px;
                     min-height: 125px;
                     padding-bottom: 10px;
                     margin-top: 10px;
+
+                    &.music-list {
+                      min-height: 100px;
+                    }
+                    &.tag-list {
+                      min-height: 60px;
+                      gap: 10px;
+                      flex-wrap: wrap;
+                    }
+
                     .movie-item,
                     .music-item {
                       min-width: 80px !important;
@@ -588,7 +620,8 @@ const Write = () => {
                 &.mood,
                 &.direct,
                 &.movie,
-                &.music {
+                &.music,
+                &.tag {
                   border-bottom: 1.5px solid $gray-color;
                   margin: 0px 5px;
                   padding-bottom: 3px;

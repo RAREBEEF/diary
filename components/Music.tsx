@@ -94,7 +94,7 @@ const Music: React.FC<Props> = ({
   };
 
   return (
-    <details className="music-wrapper">
+    <details className="music-wrapper" open={selectedMusics.length !== 0}>
       <summary>{todayOrTheDay}의 음악</summary>
       <div className="selected">
         <ul className="music-list">
@@ -133,7 +133,6 @@ const Music: React.FC<Props> = ({
         >
           <input
             className="music"
-            list="music-list"
             type="text"
             value={musicKeyword}
             onChange={onMusicKeywordChange}

@@ -23,6 +23,7 @@
     "eslint": "8.22.0",
     "eslint-config-next": "12.2.5",
     "firebase": "^9.9.3",
+    "hangul-js": "^0.2.6",
     "lodash": "^4.17.21",
     "next": "12.2.5",
     "next-compose-plugins": "^2.2.1",

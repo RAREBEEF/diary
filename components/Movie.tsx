@@ -68,7 +68,8 @@ const Movie: React.FC<Props> = ({
   };
 
   // 영화 검색 버튼 클릭
-  const onSearchMovie = () => {
+  const onSearchMovie = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault();
     if (movieKeyword.length === 0) return;
     getMovie();
   };
@@ -94,7 +95,7 @@ const Movie: React.FC<Props> = ({
   };
 
   return (
-    <details className="movie-wrapper">
+    <details className="movie-wrapper" open={selectedMovies.length !== 0}>
       <summary>{todayOrTheDay} 본 영화</summary>
       <div className="selected">
         <ul className="movie-list" ref={movieSelectedListRef}>
@@ -135,7 +136,6 @@ const Movie: React.FC<Props> = ({
         >
           <input
             className="movie"
-            list="movie-list"
             type="text"
             value={movieKeyword}
             onChange={onMovieKeywordChange}

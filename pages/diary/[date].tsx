@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -39,6 +40,7 @@ const Diary = () => {
     content: "",
     movies: [],
     musics: [],
+    tags: [],
   });
   const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
   const [redirectToWrite, setRedirectToWrite] = useState<boolean>(false);
@@ -149,7 +151,14 @@ const Diary = () => {
 
     if (ok) {
       dispatch<any>(
-        deleteDiaryThunk(diary?.attachmentId, uid, year, month, date)
+        deleteDiaryThunk(
+          diary?.attachmentId,
+          diary?.tags,
+          uid,
+          year,
+          month,
+          date
+        )
       );
       setRedirectToHome(true);
     }
@@ -173,12 +182,7 @@ const Diary = () => {
         title={`일기장 | ${todayOrTheDay === "오늘" ? "오늘" : queryDate}`}
       />
 
-      <HeaderNav
-        backTo="/"
-        backToText="홈으로"
-        title={diary.title}
-        subTitle={`${year} / ${month} / ${date}`}
-      >
+      <HeaderNav title={diary.title} subTitle={`${year} / ${month} / ${date}`}>
         <section className="tool-bar">
           <Button style={{ border: "none", padding: "0" }}>
             <Link href={`/write/${queryDate}`}>
@@ -210,6 +214,24 @@ const Diary = () => {
               </section>
             )}
           </div>
+        )}
+
+        {diary.tags && diary.tags.length !== 0 && (
+          <section className="tags">
+            <h3> {`${todayOrTheDay}의 태그`}</h3>
+            <ul className="tag-list">
+              {diary.tags.map((tag: any, i: number) => (
+                <li key={i} className={classNames("tag-item", "hover-bigger")}>
+                  <Link href={`/tags/${tag}`}>
+                    <a>
+                      <span className="hash">#</span>
+                      {tag}
+                    </a>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
 
         {diary.musics && diary.musics.length !== 0 && (
@@ -346,11 +368,13 @@ const Diary = () => {
             }
 
             .movies,
-            .musics {
+            .musics,
+            .tags {
               width: 100%;
 
               .movie-list,
-              .music-list {
+              .music-list,
+              .tag-list {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
@@ -366,8 +390,14 @@ const Diary = () => {
                   justify-content: flex-start;
                 }
 
+                &.tag-list {
+                  justify-content: flex-start;
+                  gap: 10px;
+                }
+
                 .movie-item,
-                .music-item {
+                .music-item,
+                .tag-item {
                   position: relative;
                   border-radius: 5px;
                   width: 30vw;
@@ -384,6 +414,20 @@ const Diary = () => {
                       font: {
                         size: 14px;
                       }
+                    }
+                  }
+
+                  &.tag-item {
+                    width: auto;
+                    min-width: auto;
+                    padding: 5px 10px;
+                    color: $gray-color;
+                    font: {
+                      weight: 700;
+                    }
+                    .hash {
+                      color: darkgray;
+                      margin-right: 2px;
                     }
                   }
 
