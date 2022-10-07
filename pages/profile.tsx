@@ -167,12 +167,7 @@ const Profile = () => {
     <section className="page-container">
       <Seo title="일기장 | 프로필" />
       <div>
-        <HeaderNav
-          backTo="/"
-          backToText="홈으로"
-          title="프로필 설정"
-          subTitle={displayName}
-        />
+        <HeaderNav title="프로필 설정" subTitle={displayName} />
 
         <section className="contents">
           <div className="displayName">
