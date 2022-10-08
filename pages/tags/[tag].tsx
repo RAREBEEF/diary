@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import Footer from "../../components/Footer";
 import HeaderNav from "../../components/HeaderNav";
+import Loading from "../../components/Loading";
 import { getTagsThunk } from "../../redux/modules/setDiaries";
 import { reduxStateType } from "../../redux/store";
 
@@ -14,17 +15,30 @@ const Tag = () => {
   const {
     loginData: {
       userData: { uid },
+      isLoggedIn,
     },
-    diariesData: { tags },
+    diariesData: { tags, loading },
   } = useSelector((state: reduxStateType): reduxStateType => state);
   const [dates, setDates] = useState<Array<string>>([]);
   const [monthly, setMonthly] = useState<Array<string>>([]);
   const [tag, setTag] = useState<string>("");
+  const [init, setInit] = useState<boolean>(false);
 
   useEffect(() => {
-    if (router.query.dispatched === "true") return;
+    // 로그인 여부 체크
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
+
+    if (router.query.dispatched === "true") {
+      setInit(true);
+      return;
+    }
+
     dispatch<any>(getTagsThunk(uid));
-  }, [dispatch, uid, router]);
+    setInit(true);
+  }, [dispatch, uid, router, isLoggedIn]);
 
   useEffect(() => {
     if (typeof router.query.tag === "string") setTag(router.query.tag);
@@ -51,9 +65,9 @@ const Tag = () => {
 
   return (
     <section className="page-container">
+      <Loading isShow={loading || !init} text="로딩 중" />
       <div>
         <HeaderNav title={`#` + tag} subTitle="태그 된 일기" />
-
         <ol>
           {monthly ? (
             monthly.map((month, i) => (
@@ -65,10 +79,7 @@ const Tag = () => {
                       return (
                         <li key={i} className="hover-bigger">
                           <Link href={`/diary/${date}`}>
-                            <a>{`${date.slice(
-                              4,
-                              6
-                            )}월 ${date.slice(6)}일`}</a>
+                            <a>{`${date.slice(4, 6)}월 ${date.slice(6)}일`}</a>
                           </Link>
                         </li>
                       );
@@ -86,16 +97,17 @@ const Tag = () => {
         @import "../../styles/var.scss";
 
         .page-container {
+          width: 100%;
+          padding: {
+            left: 50px;
+            right: 50px;
+          }
+
           & > div {
             min-height: 100vh;
             justify-content: center;
-            width: 100%;
             max-width: 1000px;
             margin: auto;
-            padding: {
-              left: 50px;
-              right: 50px;
-            }
 
             ol {
               & > li {
@@ -146,11 +158,9 @@ const Tag = () => {
 
         @media all and (max-width: 500px) {
           .page-container {
-            & > div {
-              padding: {
-                left: 20px;
-                right: 20px;
-              }
+            padding: {
+              left: 20px;
+              right: 20px;
             }
           }
         }

@@ -7,20 +7,33 @@ import HeaderNav from "../../components/HeaderNav";
 import { getTagsThunk } from "../../redux/modules/setDiaries";
 import { reduxStateType } from "../../redux/store";
 import Hangul from "hangul-js";
+import { useRouter } from "next/router";
+import Loading from "../../components/Loading";
 
 const Tags = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const {
     loginData: {
       userData: { uid },
+      isLoggedIn,
     },
-    diariesData: { tags },
+    diariesData: { tags, loading },
   } = useSelector((state: reduxStateType): reduxStateType => state);
   const [firstLetters, setFirstLetters] = useState<Array<string>>([]);
+  const [init, setInit] = useState<boolean>(false);
 
   useEffect(() => {
+    // 로그인 여부 체크
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
+
     dispatch<any>(getTagsThunk(uid));
-  }, [dispatch, uid]);
+
+    setInit(true);
+  }, [dispatch, isLoggedIn, router, uid]);
 
   // 첫글자 초성 분리
   useEffect(() => {
@@ -43,6 +56,7 @@ const Tags = () => {
 
   return (
     <section className="page-container">
+      <Loading isShow={loading || !init} text="로딩 중" />
       <div>
         <HeaderNav title="나의 태그" subTitle="태그 목록" />
         <ol>
@@ -87,6 +101,7 @@ const Tags = () => {
       </div>
       <style jsx>{`
         @import "../../styles/var.scss";
+
         .page-container {
           width: 100%;
           padding: {

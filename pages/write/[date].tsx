@@ -188,10 +188,23 @@ const Write = () => {
       diaryData.attachmentId = prevDiary.attachmentId;
       diaryData.attachmentUrl = prevDiary.attachmentUrl;
 
-      // 첨부사진이 수정 되었을 경우 기존의 사진을 스토리지에서 삭제
+      // 첨부사진을 변경한 경우 기존의 사진을 스토리지에서 삭제
       if (fileEdited) {
         const storageRef = ref(storage, `${uid}/${diaryData.attachmentId}`);
-        await deleteObject(storageRef);
+        await deleteObject(storageRef).catch((error) => {
+          if (error.code === "storage/object-not-found") return;
+          else {
+            window.alert(
+              "첨부파일 수정에 실패하였습니다.\n잠시 후 다시 시도해 주세요."
+            );
+          }
+        });
+      }
+
+      // 첨부사진을 삭제한 경우 데이터 비우기
+      if (attachment !== null) {
+        diaryData.attachmentId = "";
+        diaryData.attachmentUrl = "";
       }
     }
 

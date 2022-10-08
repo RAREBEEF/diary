@@ -221,7 +221,7 @@ const Diary = () => {
             <h3> {`${todayOrTheDay}의 태그`}</h3>
             <ul className="tag-list">
               {diary.tags.map((tag: any, i: number) => (
-                <li key={i} className={classNames("tag-item", "hover-bigger")}>
+                <li key={i} className={classNames("hover-bigger", "tag-item")}>
                   <Link href={`/tags/${tag}`}>
                     <a>
                       <span className="hash">#</span>
@@ -395,9 +395,25 @@ const Diary = () => {
                   gap: 10px;
                 }
 
-                .movie-item,
-                .music-item,
                 .tag-item {
+                  a {
+                    border-radius: 5px;
+                    box-shadow: 3px 3px 5px $gray-color;
+                    color: $gray-color;
+                    padding: 5px 15px;
+                    font: {
+                      weight: 700;
+                      size: 16px;
+                    }
+                  }
+                  .hash {
+                    color: darkgray;
+                    margin-right: 2px;
+                  }
+                }
+
+                .movie-item,
+                .music-item {
                   position: relative;
                   border-radius: 5px;
                   width: 30vw;
@@ -414,20 +430,6 @@ const Diary = () => {
                       font: {
                         size: 14px;
                       }
-                    }
-                  }
-
-                  &.tag-item {
-                    width: auto;
-                    min-width: auto;
-                    padding: 5px 10px;
-                    color: $gray-color;
-                    font: {
-                      weight: 700;
-                    }
-                    .hash {
-                      color: darkgray;
-                      margin-right: 2px;
                     }
                   }
 
