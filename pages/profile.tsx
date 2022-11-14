@@ -16,6 +16,7 @@ import Seo from "../components/Seo";
 import HeaderNav from "../components/HeaderNav";
 
 const Profile = () => {
+  const testerId = "1m3DqLC3cPQSPHGhZW1F0mTS8yY2";
   const dispatch = useDispatch();
   const router = useRouter();
   const {
@@ -61,10 +62,15 @@ const Profile = () => {
       return;
     }
 
-    if (newDisplayName.length === 0) {
+    if (uid === testerId) {
+      window.alert(`테스트 계정의 정보는 변경하실 수 없습니다.`);
+      return;
+    } else if (newDisplayName.length === 0) {
       window.alert(`이름을 입력해 주세요.`);
+      return;
     } else if (newDisplayName.length < 2 || newDisplayName.length > 20) {
       window.alert(`이름은 2~20 글자 이내여야 합니다.`);
+      return;
     }
 
     updateProfile(auth.currentUser, {
@@ -93,6 +99,11 @@ const Profile = () => {
     if (!auth.currentUser || !auth.currentUser.email) {
       return;
     }
+    if (uid === testerId) {
+      window.alert(`테스트 계정의 정보는 변경하실 수 없습니다.`);
+      return;
+    }
+
     sendPasswordResetEmail(auth, auth.currentUser.email)
       .then(() => {
         window.alert(`재설정 메일이 발송되었습니다.`);
@@ -114,6 +125,12 @@ const Profile = () => {
     if (!auth.currentUser) {
       return;
     }
+
+    if (uid === testerId) {
+      window.alert(`테스트 계정의 정보는 변경하실 수 없습니다.`);
+      return;
+    }
+
     const ok = window.confirm(`계정을 삭제 하시겠습니까?`);
 
     if (ok) {

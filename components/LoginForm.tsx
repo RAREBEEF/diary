@@ -131,7 +131,17 @@ const LoginForm: React.FC<Props> = ({ reauth }) => {
     } else if (formAction === "login") {
       setLoading(true);
 
-      await signInWithEmailAndPassword(auth, email, pw)
+      let isTest = false;
+
+      if (email === "test" && pw === "test") {
+        isTest = true;
+      }
+
+      await signInWithEmailAndPassword(
+        auth,
+        isTest ? "test@test.com" : email,
+        isTest ? "test@test.com" : pw
+      )
         .then((userCredential) => {
           const user = userCredential.user;
           dispatch(
