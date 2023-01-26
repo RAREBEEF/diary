@@ -372,6 +372,10 @@ const Diary = () => {
             .tags {
               width: 100%;
 
+              &.movies {
+                margin-bottom: 75px;
+              }
+
               .movie-list,
               .music-list,
               .tag-list {
